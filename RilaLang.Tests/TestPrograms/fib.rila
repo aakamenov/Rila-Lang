@@ -1,0 +1,11 @@
+fun fib(int n) -> int   
+    a is 0
+    b is 1
+
+    for i in 0..n
+        temp = a
+        a = b
+        b = temp + b
+
+    return a
+    

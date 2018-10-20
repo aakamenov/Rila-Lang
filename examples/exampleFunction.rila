@@ -1,0 +1,28 @@
+use System.Random
+use System.Collections.Generic
+
+fun score(int length, lambda indexChooser) -> int
+    int steps is 0
+    l is new List[int](length)
+    rnd is new Random
+
+    while true
+        foreach x in 0..length - 1
+            if l[x] > l[x + 1]
+                break
+            else
+                return steps
+            (i, j) is indexChooser(length)
+            assert: i < j
+
+            if l[i] > l[j]
+                (l[i], l[j]) is (l[j], l[i])
+            
+            steps++
+
+#Lambdas
+indexChooser(
+    lambda: x, y -> 
+        x is 2
+        y is 3
+        return x > y)

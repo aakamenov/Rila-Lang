@@ -1,0 +1,6 @@
+trait Car:
+    fun Start
+    fun Lock(Remote remote) 
+    fun Unlock(Remote remote)
+    fun GasAmount() -> int
+    event Started
