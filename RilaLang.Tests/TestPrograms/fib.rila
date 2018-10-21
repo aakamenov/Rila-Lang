@@ -1,4 +1,4 @@
-fun fib(int n) -> int   
+fun fib(int n) -> int
     a is 0
     b is 1
 

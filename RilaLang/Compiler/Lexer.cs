@@ -13,8 +13,8 @@ namespace RilaLang.Compiler
         private readonly string fileName;
 
         private int position;
-        private int currentLine;
-        private int currentColumn;
+        private uint currentLine;
+        private uint currentColumn;
         private readonly int sourceLength;
 
         private bool atEof => position >= sourceLength;
@@ -36,7 +36,6 @@ namespace RilaLang.Compiler
             }
 
             var next = source[position];
-            currentColumn++;
 
             switch(next)
             {
@@ -45,22 +44,86 @@ namespace RilaLang.Compiler
                     break;
                 case '\n':
                 case '\r':
-                    var peeked = PeekChar(out char peekChar);
-                    var builder = new StringBuilder(next.ToString());
+                    { 
+                        var peeked = PeekChar(out char peekChar);
+                        var builder = new StringBuilder(next.ToString());
 
-                    if (peeked && (peekChar == '\n' || peekChar == '\r'))
-                    {
-                        position++;
-                        builder.Append(peekChar);
-                    }
+                        if (peeked && (peekChar == '\n' || peekChar == '\r'))
+                        {
+                            position += 2;
+                            builder.Append(peekChar);
+                        }
                     
-                    yield return new Token(TokenType.NewLine, builder.ToString(), currentLine, currentColumn);
+                        yield return new Token(TokenType.NewLine, builder.ToString(), currentLine, currentColumn);
+                        currentLine++;
+                    }
+                    break;
+                case '\t':
+                    yield return new Token(TokenType.Tab, "\t", currentLine, currentColumn);
+                    break;
+                case '(':
+                    yield return new Token(TokenType.LParen, "(", currentLine, currentColumn);
+                    break;
+                case ')':
+                    yield return new Token(TokenType.RParen, ")", currentLine, currentColumn);
+                    break;
+                case '.':
+                    { 
+                        if(PeekChar(out char peeked) && peeked == '.')
+                        {
+                            yield return new Token(TokenType.Range, "..", currentLine, currentColumn);
+                            position += 2;
+                        }
+                        else
+                        {
+                            yield return new Token(TokenType.Dot, ".", currentLine, currentColumn);
+                        }
+                    }
+                    break;
+                case '+':
+                    yield return new Token(TokenType.Plus, "+", currentLine, currentColumn);
+                    break;
+                case '>':
+                    yield return new Token(TokenType.GreaterThan, ">", currentLine, currentColumn);
+                    break;
+                case '<':
+                    yield return new Token(TokenType.LessThan, "<", currentLine, currentColumn);
+                    break;
+                case '-':
+                    {
+                        if (PeekChar(out char peeked) && peeked == '>')
+                        {
+                            yield return new Token(TokenType.Arrow, "->", currentLine, currentColumn);
+                            position += 2;
+                        }
+                        else
+                        {
+                            yield return new Token(TokenType.Minus, "-", currentLine, currentColumn);
+                        }
+                    }
                     break;
                     
                 default:
-                    yield return new Token(TokenType.EOF, string.Empty, currentLine, currentColumn);
+                    {
+
+                        if (TryReadWord(ref next, out string word))
+                        {
+                            if (Token.TryGetKeyword(word, out TokenType tokenType))
+                            {
+                                yield return new Token(tokenType, word, currentLine, currentColumn);
+                            }
+                            else
+                            {
+                                yield return new Token(TokenType.Identifier, word, currentLine, currentColumn);
+                            }
+                        }
+                        else
+                            yield return new Token(TokenType.None, string.Empty, currentLine, currentColumn);
+                    }
                     break;
             }
+
+            position++;
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -80,9 +143,36 @@ namespace RilaLang.Compiler
             return true;
         }
 
+        private bool TryReadWord(ref char first, out string word)
+        {
+            var builder = new StringBuilder(first);
+
+            while(PeekChar(out char next))
+            {
+                if (IsWordChar(next))
+                { 
+                    builder.Append(next);
+                    position++;
+                }
+                else
+                {
+                    word = null;
+                    return false;
+                }
+            }
+
+            word = builder.ToString();
+            return true;
+        }
+
+        private bool IsWordChar(char @char)
+        {
+            return char.IsLetter(@char) || @char == '_';
+        }
+
         private string ReadStringLiteral()
         {
-            var builder = new StringBuilder();
+            var builder = new StringBuilder("\"");
 
             while(true)
             {
@@ -104,12 +194,10 @@ namespace RilaLang.Compiler
                 }
                 else if (ch == '\"')
                 {
-                    position++;
                     break;
                 }
                 else
-                    builder.Append(ch);
-                           
+                    builder.Append(ch);                       
             }
 
             return builder.ToString();
