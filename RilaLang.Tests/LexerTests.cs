@@ -78,13 +78,20 @@ namespace RilaLang.Tests
             var i = 0;
             foreach(var token in lexer)
             {
-                var match = tokens[i].TokenType;
+                var match = tokens[i];
 
-                if (token.TokenType != match)
+                if (!TokenEquals(token, match))
                     throw new XunitException($"Token expected: {match}, got: {token.TokenType}");
 
                 i++;
             }
+        }
+
+        private bool TokenEquals(Token lhs, Token rhs)
+        {
+            return lhs.TokenType == rhs.TokenType &&
+                   lhs.Content == rhs.Content &&
+                   lhs.Line == rhs.Line;
         }
     }
 }
