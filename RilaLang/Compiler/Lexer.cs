@@ -54,8 +54,7 @@ namespace RilaLang.Compiler
 
                         if (peeked && (peekChar == '\n' || peekChar == '\r'))
                         {
-                            position++;
-                            currentColumn++;
+                            AdvancePosition();
                             builder.Append(peekChar);
                         }
                     
@@ -74,8 +73,7 @@ namespace RilaLang.Compiler
                         if(TryPeekChar(out char peeked) && peeked == '.')
                         {
                             token = new Token(TokenType.Range, "..", currentLine, currentColumn);
-                            currentColumn++;
-                            position++;
+                            AdvancePosition();
                         }
                         else
                             token = new Token(TokenType.Dot, ".", currentLine, currentColumn);
@@ -110,8 +108,7 @@ namespace RilaLang.Compiler
                         if (TryPeekChar(out char peeked) && peeked == '>')
                         {
                             token = new Token(TokenType.Arrow, "->", currentLine, currentColumn);
-                            currentColumn++;
-                            position++;
+                            AdvancePosition();
                         }
                         else
                             token = new Token(TokenType.Minus, "-", currentLine, currentColumn);
@@ -134,10 +131,9 @@ namespace RilaLang.Compiler
             }
 
             end:
-                currentColumn++;
-                position++;
+            AdvancePosition();
 
-                return token;
+            return token;
         }
 
         private bool TryPeekChar(out char next)
@@ -159,7 +155,7 @@ namespace RilaLang.Compiler
                 if (!IsWhiteSpace(ref next))
                     break;
 
-                position++;
+                AdvancePosition();
             }
         }
 
@@ -174,6 +170,12 @@ namespace RilaLang.Compiler
             currentColumn = 0;
         }
 
+        private void AdvancePosition()
+        {
+            position++;
+            currentColumn++;
+        }
+
         private string ReadWord(char first)
         {
             var builder = new StringBuilder();
@@ -186,8 +188,7 @@ namespace RilaLang.Compiler
                 if (IsWordChar(next))
                 { 
                     builder.Append(next);
-                    currentColumn++;
-                    position++;
+                    AdvancePosition();
                 }
                 else
                 {
@@ -208,7 +209,7 @@ namespace RilaLang.Compiler
                 if (char.IsDigit(next))
                 {
                     builder.Append(next);
-                    position++;
+                    AdvancePosition();
                 }
                 else
                     break;
@@ -228,8 +229,7 @@ namespace RilaLang.Compiler
 
             while(true)
             {
-                position++;
-                currentColumn++;
+                AdvancePosition();
 
                 if (AtEof)
                     throw new RilaParserException($"Missing closing string literal quote ({currentLine}, {currentColumn})");
@@ -242,7 +242,7 @@ namespace RilaLang.Compiler
                     {
                         builder.Append(ch);
                         builder.Append(next);
-                        position++;
+                        AdvancePosition();
                     }
                 }
                 else if (ch == '\"')
