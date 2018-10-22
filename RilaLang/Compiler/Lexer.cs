@@ -50,7 +50,7 @@ namespace RilaLang.Compiler
 
                         if (peeked && (peekChar == '\n' || peekChar == '\r'))
                         {
-                            position += 2;
+                            position++;
                             builder.Append(peekChar);
                         }
                     
@@ -72,7 +72,7 @@ namespace RilaLang.Compiler
                         if(PeekChar(out char peeked) && peeked == '.')
                         {
                             yield return new Token(TokenType.Range, "..", currentLine, currentColumn);
-                            position += 2;
+                            position++;
                         }
                         else
                         {
@@ -94,7 +94,7 @@ namespace RilaLang.Compiler
                         if (PeekChar(out char peeked) && peeked == '>')
                         {
                             yield return new Token(TokenType.Arrow, "->", currentLine, currentColumn);
-                            position += 2;
+                            position++;
                         }
                         else
                         {
@@ -106,7 +106,7 @@ namespace RilaLang.Compiler
                 default:
                     {
 
-                        if (TryReadWord(ref next, out string word))
+                        if (TryReadWord(next, out string word))
                         {
                             if (Token.TryGetKeyword(word, out TokenType tokenType))
                             {
@@ -143,12 +143,16 @@ namespace RilaLang.Compiler
             return true;
         }
 
-        private bool TryReadWord(ref char first, out string word)
+        private bool TryReadWord(char first, out string word)
         {
-            var builder = new StringBuilder(first);
+            var builder = new StringBuilder();
+            builder.Append(first);
 
             while(PeekChar(out char next))
             {
+                if(char.IsWhiteSpace(next))
+                    break;
+
                 if (IsWordChar(next))
                 { 
                     builder.Append(next);
