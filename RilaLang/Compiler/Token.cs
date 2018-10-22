@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace RilaLang.Compiler
 {
@@ -46,7 +42,8 @@ namespace RilaLang.Compiler
 
         public override string ToString()
         {
-            return $"Token Type: {TokenType}, Content: {Content}, Line: {Line}, Column: {Column}";
+            var content = string.IsNullOrEmpty(Content) ? "None" : Content;
+            return $"Token Type: {TokenType}, Content: {content}, Line: {Line}, Column: {Column}";
         }
     }
 
@@ -55,7 +52,7 @@ namespace RilaLang.Compiler
         None = 0,
         EOF,
         NewLine,
-        Tab,
+        WhiteSpace,
 
         Identifier,
         Int,

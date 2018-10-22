@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace RilaLang.Compiler
 {
-    public class Lexer : IEnumerable<Token>
+    public class Lexer
     {
+        public bool AtEof => position >= sourceLength;
+
         private readonly string source;
         private readonly string fileName;
 
@@ -16,8 +13,6 @@ namespace RilaLang.Compiler
         private uint currentLine;
         private uint currentColumn;
         private readonly int sourceLength;
-
-        private bool atEof => position >= sourceLength;
 
         public Lexer(string source, string fileName = null)
         {
@@ -27,111 +22,125 @@ namespace RilaLang.Compiler
             currentLine = 1;
         }
 
-        public IEnumerator<Token> GetEnumerator()
+        public Token NextToken()
         {
-            if (atEof)
+            if (AtEof)
             {
-                yield return new Token(TokenType.EOF, string.Empty, currentLine, currentColumn);
-                yield break;
+                return new Token(TokenType.EOF, string.Empty, currentLine, currentColumn);
             }
 
             var next = source[position];
+            Token token = null;
+
+            if(IsWhiteSpace(ref next))
+            {
+                ConsumeWhiteSpace();
+                token = new Token(TokenType.WhiteSpace, string.Empty, currentLine, currentColumn);
+
+                goto end;
+            }
 
             switch(next)
             {
                 case '\"':
-                    yield return new Token(TokenType.StringLiteral, ReadStringLiteral(), currentLine, currentColumn);
+                    token = new Token(TokenType.StringLiteral, ReadStringLiteral(), currentLine, currentColumn);
                     break;
-                case '\n':
                 case '\r':
+                case '\n':
                     { 
-                        var peeked = PeekChar(out char peekChar);
-                        var builder = new StringBuilder(next.ToString());
+                        var peeked = TryPeekChar(out char peekChar);
+                        var builder = new StringBuilder();
+                        builder.Append(next);
 
                         if (peeked && (peekChar == '\n' || peekChar == '\r'))
                         {
                             position++;
+                            currentColumn++;
                             builder.Append(peekChar);
                         }
                     
-                        yield return new Token(TokenType.NewLine, builder.ToString(), currentLine, currentColumn);
-                        currentLine++;
+                        token = new Token(TokenType.NewLine, builder.ToString(), currentLine, currentColumn);
+                        NewLine();
                     }
                     break;
-                case '\t':
-                    yield return new Token(TokenType.Tab, "\t", currentLine, currentColumn);
-                    break;
                 case '(':
-                    yield return new Token(TokenType.LParen, "(", currentLine, currentColumn);
+                    token = new Token(TokenType.LParen, "(", currentLine, currentColumn);
                     break;
                 case ')':
-                    yield return new Token(TokenType.RParen, ")", currentLine, currentColumn);
+                    token = new Token(TokenType.RParen, ")", currentLine, currentColumn);
                     break;
                 case '.':
                     { 
-                        if(PeekChar(out char peeked) && peeked == '.')
+                        if(TryPeekChar(out char peeked) && peeked == '.')
                         {
-                            yield return new Token(TokenType.Range, "..", currentLine, currentColumn);
+                            token = new Token(TokenType.Range, "..", currentLine, currentColumn);
+                            currentColumn++;
                             position++;
                         }
                         else
-                        {
-                            yield return new Token(TokenType.Dot, ".", currentLine, currentColumn);
-                        }
+                            token = new Token(TokenType.Dot, ".", currentLine, currentColumn);
                     }
                     break;
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    token = new Token(TokenType.NumericLiteral, ReadNumericLiteral(next), currentLine, currentColumn);
+                    break;
+                case '=':
+                    token = new Token(TokenType.Assign, "=", currentLine, currentColumn);
+                    break;
                 case '+':
-                    yield return new Token(TokenType.Plus, "+", currentLine, currentColumn);
+                    token = new Token(TokenType.Plus, "+", currentLine, currentColumn);
                     break;
                 case '>':
-                    yield return new Token(TokenType.GreaterThan, ">", currentLine, currentColumn);
+                    token = new Token(TokenType.GreaterThan, ">", currentLine, currentColumn);
                     break;
                 case '<':
-                    yield return new Token(TokenType.LessThan, "<", currentLine, currentColumn);
+                    token = new Token(TokenType.LessThan, "<", currentLine, currentColumn);
                     break;
                 case '-':
                     {
-                        if (PeekChar(out char peeked) && peeked == '>')
+                        if (TryPeekChar(out char peeked) && peeked == '>')
                         {
-                            yield return new Token(TokenType.Arrow, "->", currentLine, currentColumn);
+                            token = new Token(TokenType.Arrow, "->", currentLine, currentColumn);
+                            currentColumn++;
                             position++;
                         }
                         else
-                        {
-                            yield return new Token(TokenType.Minus, "-", currentLine, currentColumn);
-                        }
+                            token = new Token(TokenType.Minus, "-", currentLine, currentColumn);
                     }
                     break;
-                    
                 default:
                     {
+                        var word = ReadWord(next);
 
-                        if (TryReadWord(next, out string word))
+                        if (Token.TryGetKeyword(word, out TokenType tokenType))
                         {
-                            if (Token.TryGetKeyword(word, out TokenType tokenType))
-                            {
-                                yield return new Token(tokenType, word, currentLine, currentColumn);
-                            }
-                            else
-                            {
-                                yield return new Token(TokenType.Identifier, word, currentLine, currentColumn);
-                            }
+                            token = new Token(tokenType, word, currentLine, currentColumn);
                         }
                         else
-                            yield return new Token(TokenType.None, string.Empty, currentLine, currentColumn);
+                        {
+                            token = new Token(TokenType.Identifier, word, currentLine, currentColumn);
+                        }
                     }
                     break;
             }
 
-            position++;
+            end:
+                currentColumn++;
+                position++;
+
+                return token;
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        private bool PeekChar(out char next)
+        private bool TryPeekChar(out char next)
         {
             if (position + 1 >= sourceLength)
             {
@@ -143,53 +152,93 @@ namespace RilaLang.Compiler
             return true;
         }
 
-        private bool TryReadWord(char first, out string word)
+        private void ConsumeWhiteSpace()
+        {
+            while(TryPeekChar(out char next))
+            {
+                if (!IsWhiteSpace(ref next))
+                    break;
+
+                position++;
+            }
+        }
+
+        private bool IsWhiteSpace(ref char c)
+        {
+            return c == ' ' || c == '\t' || c == '\0';
+        }
+
+        private void NewLine()
+        {
+            currentLine++;
+            currentColumn = 0;
+        }
+
+        private string ReadWord(char first)
         {
             var builder = new StringBuilder();
             builder.Append(first);
 
-            while(PeekChar(out char next))
+            while(TryPeekChar(out char next))
             {
-                if(char.IsWhiteSpace(next))
-                    break;
+
 
                 if (IsWordChar(next))
                 { 
                     builder.Append(next);
+                    currentColumn++;
                     position++;
                 }
                 else
                 {
-                    word = null;
-                    return false;
+                    break;
                 }
             }
 
-            word = builder.ToString();
-            return true;
+            return builder.ToString();
         }
 
-        private bool IsWordChar(char @char)
+        private string ReadNumericLiteral(char first)
         {
-            return char.IsLetter(@char) || @char == '_';
+            var builder = new StringBuilder();
+            builder.Append(first);
+
+            while(TryPeekChar(out char next))
+            {
+                if (char.IsDigit(next))
+                {
+                    builder.Append(next);
+                    position++;
+                }
+                else
+                    break;
+            }
+
+            return builder.ToString();
+        }
+
+        private bool IsWordChar(char c)
+        {
+            return char.IsLetter(c) || c == '_';
         }
 
         private string ReadStringLiteral()
         {
-            var builder = new StringBuilder("\"");
+            var builder = new StringBuilder();
 
             while(true)
             {
                 position++;
+                currentColumn++;
 
-                if (atEof)
+                if (AtEof)
                     throw new RilaParserException($"Missing closing string literal quote ({currentLine}, {currentColumn})");
 
                 var ch = source[position];
 
                 if (ch == '\\')
                 {
-                    if (PeekChar(out char next) && next == '\"')
+                    if (TryPeekChar(out char next) && next == '\"')
                     {
                         builder.Append(ch);
                         builder.Append(next);
