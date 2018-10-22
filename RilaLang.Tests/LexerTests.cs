@@ -46,7 +46,7 @@ namespace RilaLang.Tests
                 new Token(TokenType.WhiteSpace, string.Empty, 4, 0),
                 new Token(TokenType.Is, "is", 4, 0),
                 new Token(TokenType.WhiteSpace, string.Empty, 4, 0),
-                new Token(TokenType.StringLiteral, "test string", 4, 0),
+                new Token(TokenType.StringLiteral, "test \"string\"", 4, 0),
                 new Token(TokenType.NewLine, "\r\n", 4, 0),
                 new Token(TokenType.WhiteSpace, string.Empty, 5, 0),
                 new Token(TokenType.For, "for", 5, 6),

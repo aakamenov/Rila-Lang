@@ -240,7 +240,6 @@ namespace RilaLang.Compiler
                 {
                     if (TryPeekChar(out char next) && next == '\"')
                     {
-                        builder.Append(ch);
                         builder.Append(next);
                         AdvancePosition();
                     }
