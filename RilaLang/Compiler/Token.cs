@@ -12,7 +12,7 @@ namespace RilaLang.Compiler
         private static Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>()
         {
             { "if", TokenType.If },
-            { "elsif", TokenType.ElseIf },
+            { "elif", TokenType.ElseIf },
             { "is", TokenType.Is },
             { "fun", TokenType.Function },
             { "int", TokenType.Int },
