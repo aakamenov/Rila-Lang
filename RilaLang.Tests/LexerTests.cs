@@ -8,7 +8,7 @@ namespace RilaLang.Tests
     public class LexerTests
     {
         [Fact]
-        public void ParseProgram()
+        public void LexProgram()
         {
             var program = File.ReadAllText("TestPrograms/fib.rila");
             var lexer = new Lexer(program);
@@ -93,10 +93,54 @@ namespace RilaLang.Tests
                 new Token(TokenType.EOF, string.Empty, 11, 0)
             };
 
+            AssertTokens(lexer, tokens);
+        }
+
+        [Fact]
+        public void LexIf()
+        {
+            var program = File.ReadAllText("TestPrograms/if.rila");
+            var lexer = new Lexer(program);
+            var tokens = new Token[] //Column numbers are not tested
+            {
+                new Token(TokenType.If, "if", 1, 0),
+                new Token(TokenType.WhiteSpace, string.Empty, 1, 0),
+                new Token(TokenType.StringLiteral, "string", 1, 0),
+                new Token(TokenType.WhiteSpace, string.Empty, 1, 0),
+                new Token(TokenType.Equal, "==", 1, 0),
+                new Token(TokenType.WhiteSpace, string.Empty, 1, 0),
+                new Token(TokenType.NumericLiteral, "5", 1, 0),
+                new Token(TokenType.NewLine, "\r\n", 1, 0),
+                new Token(TokenType.WhiteSpace, string.Empty, 2, 0),
+                new Token(TokenType.Identifier, "x", 2, 0),
+                new Token(TokenType.WhiteSpace, string.Empty, 2, 0),
+                new Token(TokenType.Is, "is", 2, 0),
+                new Token(TokenType.WhiteSpace, string.Empty, 2, 0),
+                new Token(TokenType.True, "true", 2, 0),
+                new Token(TokenType.NewLine, "\r\n", 2, 0),
+                new Token(TokenType.NewLine, "\r\n", 3, 0),
+                new Token(TokenType.EOF, string.Empty, 4, 0)
+            };
+
             var i = 0;
-            while(!lexer.AtEof)
+            while (!lexer.AtEof)
             {
                 var match = tokens[i];
+                var token = lexer.NextToken();
+
+                if (!TokenEquals(token, match))
+                    throw new XunitException($"Token expected: {match}, got: {token}");
+
+                i++;
+            }
+        }
+
+        private void AssertTokens(Lexer lexer, Token[] testTokens)
+        {
+            var i = 0;
+            while (!lexer.AtEof)
+            {
+                var match = testTokens[i];
                 var token = lexer.NextToken();
 
                 if (!TokenEquals(token, match))

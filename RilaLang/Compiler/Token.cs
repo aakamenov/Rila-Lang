@@ -11,13 +11,17 @@ namespace RilaLang.Compiler
 
         private static Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>()
         {
+            { "if", TokenType.If },
+            { "elsif", TokenType.ElseIf },
             { "is", TokenType.Is },
             { "fun", TokenType.Function },
             { "int", TokenType.Int },
             { "string", TokenType.String },
             { "for", TokenType.For },
             { "in", TokenType.In },
-            { "return", TokenType.Return }
+            { "return", TokenType.Return },
+            { "true", TokenType.True },
+            { "false", TokenType.False }
         };
 
         public Token(TokenType type, string content, uint line, uint column)
@@ -89,6 +93,8 @@ namespace RilaLang.Compiler
         Use,
         For,
         In,
-        Return
+        Return,
+        True,
+        False
     }
 }

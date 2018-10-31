@@ -92,7 +92,15 @@ namespace RilaLang.Compiler
                     token = new Token(TokenType.NumericLiteral, ReadNumericLiteral(next), currentLine, currentColumn);
                     break;
                 case '=':
-                    token = new Token(TokenType.Assign, "=", currentLine, currentColumn);
+                    {
+                        if (TryPeekChar(out char peeked) && peeked == '=')
+                        {
+                            token = new Token(TokenType.Equal, "==", currentLine, currentColumn);
+                            AdvancePosition();
+                        }
+                        else
+                            token = new Token(TokenType.Assign, "=", currentLine, currentColumn);
+                    }
                     break;
                 case '+':
                     token = new Token(TokenType.Plus, "+", currentLine, currentColumn);
