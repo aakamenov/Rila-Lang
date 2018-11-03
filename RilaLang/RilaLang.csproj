@@ -43,10 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Compiler\Ast\AssignmentStatement.cs" />
     <Compile Include="Compiler\Ast\AstNode.cs" />
     <Compile Include="Compiler\Ast\IExpression.cs" />
     <Compile Include="Compiler\Ast\IStatement.cs" />
     <Compile Include="Compiler\Lexer.cs" />
+    <Compile Include="Compiler\Parser.cs" />
     <Compile Include="Compiler\RilaParserException.cs" />
     <Compile Include="Compiler\Token.cs" />
     <Compile Include="Program.cs" />

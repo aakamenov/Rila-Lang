@@ -34,7 +34,7 @@ namespace RilaLang.Compiler
             var next = source[position];
             Token token = null;
 
-            if(IsWhiteSpace(ref next))
+            if(IsWhiteSpace(next))
             {
                 ConsumeWhiteSpace();
                 token = new Token(TokenType.WhiteSpace, string.Empty, currentLine, currentColumn);
@@ -162,14 +162,14 @@ namespace RilaLang.Compiler
         {
             while(TryPeekChar(out char next))
             {
-                if (!IsWhiteSpace(ref next))
+                if (!IsWhiteSpace(next))
                     break;
 
                 AdvancePosition();
             }
         }
 
-        private bool IsWhiteSpace(ref char c)
+        private bool IsWhiteSpace(char c)
         {
             return c == ' ' || c == '\t' || c == '\0';
         }
@@ -193,8 +193,6 @@ namespace RilaLang.Compiler
 
             while(TryPeekChar(out char next))
             {
-
-
                 if (IsWordChar(next))
                 { 
                     builder.Append(next);
