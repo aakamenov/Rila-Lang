@@ -51,6 +51,18 @@ namespace RilaLang.Compiler
         }
     }
 
+    public class WSToken : Token
+    {
+        public uint IndentationLevel { get; }
+
+        public WSToken(uint indentationLevel, uint line, uint column) 
+            : base(TokenType.WhiteSpace, string.Empty, line, column)
+        {
+            IndentationLevel = indentationLevel;
+        }
+    }
+
+
     public enum TokenType
     {
         None = 0,
@@ -73,7 +85,9 @@ namespace RilaLang.Compiler
         Asterisk,
         Slash,
         LessThan,
+        EqLessThan,
         GreaterThan,
+        EqGreaterThan,
         Equal,
         NotEqual,
         Dot,

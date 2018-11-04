@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("RilaLang.Tests")]
@@ -15,6 +16,7 @@ namespace RilaLang.Compiler
         private uint currentLine;
         private uint currentColumn;
         private readonly int sourceLength;
+        private TokenType prevToken;
 
         internal Lexer(string source, string fileName = null)
         {
@@ -22,6 +24,16 @@ namespace RilaLang.Compiler
             this.fileName = fileName;
             sourceLength = source.Length;
             currentLine = 1;
+        }
+
+        public IReadOnlyList<Token> LexSource()
+        {
+            var list = new List<Token>();
+
+            while (!AtEof)
+                list.Add(NextToken());
+
+            return list;
         }
 
         public Token NextToken()
@@ -36,10 +48,15 @@ namespace RilaLang.Compiler
 
             if(IsWhiteSpace(next))
             {
-                ConsumeWhiteSpace();
-                token = new Token(TokenType.WhiteSpace, string.Empty, currentLine, currentColumn);
+                var wsCount = ConsumeWhiteSpace();
 
-                goto end;
+                if (prevToken == TokenType.NewLine)
+                {
+                    token = new WSToken(wsCount, currentLine, currentColumn);
+                    goto end;
+                }
+
+                next = source[position];
             }
 
             switch(next)
@@ -93,6 +110,17 @@ namespace RilaLang.Compiler
                 case '9':
                     token = new Token(TokenType.NumericLiteral, ReadNumericLiteral(next), currentLine, currentColumn);
                     break;
+                case '!':
+                    {
+                        if (TryPeekChar(out char peeked) && peeked == '=')
+                        {
+                            token = new Token(TokenType.NotEqual, "!=", currentLine, currentColumn);
+                            AdvancePosition();
+                        }
+                        else
+                            token = new Token(TokenType.Bang, "!", currentLine, currentColumn);
+                    }
+                    break;
                 case '=':
                     {
                         if (TryPeekChar(out char peeked) && peeked == '=')
@@ -108,10 +136,25 @@ namespace RilaLang.Compiler
                     token = new Token(TokenType.Plus, "+", currentLine, currentColumn);
                     break;
                 case '>':
-                    token = new Token(TokenType.GreaterThan, ">", currentLine, currentColumn);
+                    {
+                        if (TryPeekChar(out char peeked) && peeked == '=')
+                        {
+                            token = new Token(TokenType.EqGreaterThan, ">=", currentLine, currentColumn);
+                            AdvancePosition();
+                        }
+                        else
+                            token = new Token(TokenType.GreaterThan, ">", currentLine, currentColumn);
+                    }
                     break;
                 case '<':
-                    token = new Token(TokenType.LessThan, "<", currentLine, currentColumn);
+                    {
+                        if (TryPeekChar(out char peeked) && peeked == '=')
+                        {
+                            token = new Token(TokenType.EqLessThan, "=<", currentLine, currentColumn);
+                        }
+                        else
+                            token = new Token(TokenType.LessThan, "<", currentLine, currentColumn);
+                    }
                     break;
                 case '-':
                     {
@@ -123,6 +166,12 @@ namespace RilaLang.Compiler
                         else
                             token = new Token(TokenType.Minus, "-", currentLine, currentColumn);
                     }
+                    break;
+                case '/':
+                    token = new Token(TokenType.Slash, "/", currentLine, currentColumn);
+                    break;
+                case '*':
+                    token = new Token(TokenType.Asterisk, "*", currentLine, currentColumn);
                     break;
                 default:
                     {
@@ -141,7 +190,8 @@ namespace RilaLang.Compiler
             }
 
             end:
-            AdvancePosition();
+                AdvancePosition();
+                prevToken = token.TokenType;
 
             return token;
         }
@@ -158,15 +208,23 @@ namespace RilaLang.Compiler
             return true;
         }
 
-        private void ConsumeWhiteSpace()
+        private uint ConsumeWhiteSpace()
         {
+            var consumed = 1u;
+
             while(TryPeekChar(out char next))
             {
                 if (!IsWhiteSpace(next))
                     break;
 
                 AdvancePosition();
+                consumed++;
             }
+
+            if (consumed == 1)
+                AdvancePosition();
+
+            return consumed;
         }
 
         private bool IsWhiteSpace(char c)
