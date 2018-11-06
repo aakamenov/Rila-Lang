@@ -1,3 +1,3 @@
 if "string" == 5
-    x is true
+    x = true
 

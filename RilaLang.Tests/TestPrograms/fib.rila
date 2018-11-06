@@ -1,7 +1,7 @@
 fun fib(int n) -> int
-    a is 0
-    b is 1
-    test is "test \"string\""
+    a = 0
+    b = 1
+    test = "test \"string\""
     for i in 0..n
         temp = a
         a = b

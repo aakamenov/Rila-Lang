@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("RilaLang.Tests")]
 namespace RilaLang.Compiler
 {
-    internal class Lexer
+    public class Lexer
     {
         public bool AtEof => position >= sourceLength;
 
