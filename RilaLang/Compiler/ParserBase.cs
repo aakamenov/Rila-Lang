@@ -17,14 +17,41 @@ namespace RilaLang.Compiler
             prefixParselets = new Dictionary<TokenType, IPrefixParselet>();
             infixParselets = new Dictionary<TokenType, IInfixParselet>();
 
-            RegisterPrefix(TokenType.Minus, new PrefixOperatorParslet());
-            RegisterPrefix(TokenType.Plus, new PrefixOperatorParslet());
-            RegisterPrefix(TokenType.Bang, new PrefixOperatorParslet());
+            RegisterPrefix(TokenType.Identifier, new IdentifierParselet());
+            RegisterPrefix(TokenType.LParen, new GroupParselet());
+            RegisterPrefix(TokenType.True, new BoolParselet());
+            RegisterPrefix(TokenType.False, new BoolParselet());
+            RegisterPrefix(TokenType.StringLiteral, new StringParselet());
+
+            //Prefix operators
+            RegisterPrefix(TokenType.Minus, new PrefixOperatorParslet(Precedence.Prefix));
+            RegisterPrefix(TokenType.Plus, new PrefixOperatorParslet(Precedence.Prefix));
+            RegisterPrefix(TokenType.Not, new PrefixOperatorParslet(Precedence.Not));
+
+            //Math
+            RegisterInfix(TokenType.Minus, new BinaryOperatorParslet(Precedence.Sum));
+            RegisterInfix(TokenType.Plus, new BinaryOperatorParslet(Precedence.Sum));
+            RegisterInfix(TokenType.Asterisk, new BinaryOperatorParslet(Precedence.Product));
+            RegisterInfix(TokenType.Slash, new BinaryOperatorParslet(Precedence.Product));
+            RegisterInfix(TokenType.Modulo, new BinaryOperatorParslet(Precedence.Product));
+
+            //Booleans
+            RegisterInfix(TokenType.And, new BinaryOperatorParslet(Precedence.And));
+            RegisterInfix(TokenType.Or, new BinaryOperatorParslet(Precedence.Or));
+            RegisterInfix(TokenType.GreaterThan, new BinaryOperatorParslet(Precedence.Equality));
+            RegisterInfix(TokenType.LessThan, new BinaryOperatorParslet(Precedence.Equality));
+            RegisterInfix(TokenType.Equal, new BinaryOperatorParslet(Precedence.Equality));
+            RegisterInfix(TokenType.NotEqual, new BinaryOperatorParslet(Precedence.Equality));
         }
 
         private void RegisterPrefix(TokenType type, IPrefixParselet handler)
         {
             prefixParselets.Add(type, handler);
+        }
+
+        private void RegisterInfix(TokenType type, IInfixParselet handler)
+        {
+            infixParselets.Add(type, handler);
         }
     }
 }

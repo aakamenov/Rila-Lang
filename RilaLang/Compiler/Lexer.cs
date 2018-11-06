@@ -26,16 +26,6 @@ namespace RilaLang.Compiler
             currentLine = 1;
         }
 
-        public IReadOnlyList<Token> LexSource()
-        {
-            var list = new List<Token>();
-
-            while (!AtEof)
-                list.Add(NextToken());
-
-            return list;
-        }
-
         public Token NextToken()
         {
             if (AtEof)
@@ -118,7 +108,7 @@ namespace RilaLang.Compiler
                             AdvancePosition();
                         }
                         else
-                            token = new Token(TokenType.Bang, "!", currentLine, currentColumn);
+                            throw new RilaParserException($"Expecting \"=\" after a \"!\" on line {currentLine}:{currentColumn}");
                     }
                     break;
                 case '=':
@@ -172,6 +162,9 @@ namespace RilaLang.Compiler
                     break;
                 case '*':
                     token = new Token(TokenType.Asterisk, "*", currentLine, currentColumn);
+                    break;
+                case '%':
+                    token = new Token(TokenType.Modulo, "%", currentLine, currentColumn);
                     break;
                 default:
                     {

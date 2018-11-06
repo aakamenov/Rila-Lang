@@ -20,7 +20,9 @@ namespace RilaLang.Compiler
         public RilaParser(Lexer lexer) : base()
         {
             this.lexer = lexer;
+
             read = new List<Token>();
+            errorSink = new StringBuilder();
         }
         
         public AstNode Parse()
@@ -44,12 +46,12 @@ namespace RilaLang.Compiler
             return root;
         }
 
-        public AstNode ParseStatement()
+        internal AstNode ParseStatement()
         {
             throw new NotImplementedException();
         }
 
-        public Expression ParseExpression()
+        internal Expression ParseExpression(Precedence precedence = Precedence.None)
         {
             var token = Consume();
             Expression left = null;
@@ -61,16 +63,30 @@ namespace RilaLang.Compiler
             else
                 throw new RilaParserException($"Unrecognised token: {token.Content}");
 
-            token = Peek();
-
-            if (!infixParselets.TryGetValue(token.TokenType, out IInfixParselet infixParselet))
+            var p = GetPrecedence();
+            while (precedence < p)
             {
-                return left;
+                token = Consume();
+
+                if (infixParselets.TryGetValue(token.TokenType, out IInfixParselet infixParselet))
+                {
+                    left = infixParselet.Parse(this, token, left);
+                }
+                else
+                    break;
             }
 
-            Consume();
+            return left;
+        }
 
-            return infixParselet.Parse(this, token, left);
+        internal Token Expect(TokenType type)
+        {
+            var token = Peek();
+
+            if (token.TokenType != type)
+                AppendError($"Expecting '{type.ToString()}', found {token.Content}", token);
+
+            return Consume();
         }
 
         private Token Peek(int distance = 0)
@@ -94,14 +110,16 @@ namespace RilaLang.Compiler
             return token;
         }
 
-        private Token Expect(TokenType type)
+        private Precedence GetPrecedence()
         {
-            var token = Peek();
+            var peek = Peek();
 
-            if (token.TokenType != type)
-                AppendError($"Expecting '{type.ToString()}', found {token.Content}", token);
+            if(infixParselets.TryGetValue(peek.TokenType, out IInfixParselet parselet))
+            {
+                return parselet.Precedence;
+            }
 
-            return Consume();
+            return Precedence.None;
         }
 
         private void AppendError(string error, Token token)

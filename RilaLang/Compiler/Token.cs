@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace RilaLang.Compiler
 {
@@ -21,7 +22,10 @@ namespace RilaLang.Compiler
             { "in", TokenType.In },
             { "return", TokenType.Return },
             { "true", TokenType.True },
-            { "false", TokenType.False }
+            { "false", TokenType.False },
+            { "not", TokenType.Not },
+            { "and", TokenType.And },
+            { "or", TokenType.Or }
         };
 
         public Token(TokenType type, string content, uint line, uint column)
@@ -81,7 +85,9 @@ namespace RilaLang.Compiler
         Assign,
         Plus,
         Minus,
-        Bang,
+        Not,
+        And,
+        Or,
         Asterisk,
         Slash,
         LessThan,
@@ -92,6 +98,7 @@ namespace RilaLang.Compiler
         NotEqual,
         Dot,
         Range,
+        Modulo,
 
         Comma,
         Semicolon,

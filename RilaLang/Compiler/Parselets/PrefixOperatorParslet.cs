@@ -9,9 +9,16 @@ namespace RilaLang.Compiler.Parselets
 {
     public class PrefixOperatorParslet : IPrefixParselet
     {
+        public Precedence Precedence { get; }
+
+        public PrefixOperatorParslet(Precedence precedence)
+        {
+            Precedence = precedence;
+        }
+
         public Expression Parse(RilaParser parser, Token token)
         {
-            var rhs = parser.ParseExpression();
+            var rhs = parser.ParseExpression(Precedence);
 
             return new PrefixOperatorExpression(token.TokenType, rhs);
         }

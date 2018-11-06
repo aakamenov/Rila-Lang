@@ -9,6 +9,13 @@ namespace RilaLang.Compiler.Parselets
 {
     public class PostfixOperatorParselet : IInfixParselet
     {
+        public Precedence Precedence { get; }
+
+        public PostfixOperatorParselet(Precedence precedence)
+        {
+            Precedence = precedence;
+        }
+
         public Expression Parse(RilaParser parser, Token token, Expression lhs)
         {
             return new PostfixOperatorExpression(lhs, token.TokenType);
