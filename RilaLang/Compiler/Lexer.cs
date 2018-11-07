@@ -45,6 +45,9 @@ namespace RilaLang.Compiler
                     goto end;
                 }
 
+                if (wsCount == 1)
+                    AdvancePosition();
+
                 next = source[position];
             }
 
@@ -212,9 +215,6 @@ namespace RilaLang.Compiler
                 AdvancePosition();
                 consumed++;
             }
-
-            if (consumed == 1)
-                AdvancePosition();
 
             return consumed;
         }
