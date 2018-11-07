@@ -8,7 +8,6 @@ using Xunit;
 using Xunit.Sdk;
 using RilaLang.Compiler;
 using RilaLang.Compiler.Ast;
-using RilaLang.Compiler.Parselets;
 
 namespace RilaLang.Tests
 {
@@ -17,7 +16,27 @@ namespace RilaLang.Tests
         [Fact]
         public void ParseAssignmentStatement()
         {
+            var statement = "a = a + 1";
+            var lexer = new Lexer(statement);
+            var parser = new RilaParser(lexer);
 
+            var ast = parser.Parse() as Module;
+            Assert.True(ast.Statements.Count == 1);
+            var first = ast.Statements.First();
+
+            Assert.IsType<AssignmentStatement>(first);
+            var assign = first as AssignmentStatement;
+            Assert.True(assign.Identifier == "a");
+
+            Assert.IsType<BinaryOperatorExpression>(assign.Rhs);
+            var plus = assign.Rhs as BinaryOperatorExpression;
+            Assert.True(plus.Operation == TokenType.Plus);
+
+            Assert.IsType<IdentifierExpression>(plus.Lhs);
+            Assert.True((plus.Lhs as IdentifierExpression).Name == "a");
+
+            Assert.IsType<NumberExpression>(plus.Rhs);
+            Assert.True((plus.Rhs as NumberExpression).Value == 1);
         }
 
         [Fact]

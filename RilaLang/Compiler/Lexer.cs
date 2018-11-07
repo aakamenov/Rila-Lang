@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("RilaLang.Tests")]
@@ -8,9 +7,9 @@ namespace RilaLang.Compiler
     public class Lexer
     {
         public bool AtEof => position >= sourceLength;
+        public string Filename { get; }
 
         private readonly string source;
-        private readonly string fileName;
 
         private int position;
         private uint currentLine;
@@ -21,7 +20,7 @@ namespace RilaLang.Compiler
         internal Lexer(string source, string fileName = null)
         {
             this.source = source;
-            this.fileName = fileName;
+            Filename = fileName;
             sourceLength = source.Length;
             currentLine = 1;
         }

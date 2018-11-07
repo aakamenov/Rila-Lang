@@ -69,7 +69,7 @@ namespace RilaLang.Compiler
                 token = Peek();
             }
 
-            throw new NotImplementedException();
+            return new Module(lexer.Filename, statements);
         }
 
         internal Expression ParseExpression(Precedence precedence = Precedence.None)

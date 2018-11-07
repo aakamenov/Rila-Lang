@@ -22,6 +22,7 @@ namespace RilaLang.Compiler
             RegisterPrefix(TokenType.True, new BoolParselet());
             RegisterPrefix(TokenType.False, new BoolParselet());
             RegisterPrefix(TokenType.StringLiteral, new StringParselet());
+            RegisterPrefix(TokenType.NumericLiteral, new NumberParselet());
 
             //Prefix operators
             RegisterPrefix(TokenType.Minus, new PrefixOperatorParslet(Precedence.Prefix));

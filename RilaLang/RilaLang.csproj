@@ -48,6 +48,7 @@
     <Compile Include="Compiler\Ast\BinaryOperatorExpression.cs" />
     <Compile Include="Compiler\Ast\Expression.cs" />
     <Compile Include="Compiler\Ast\IdentifierExpression.cs" />
+    <Compile Include="Compiler\Ast\Module.cs" />
     <Compile Include="Compiler\Ast\PostfixOperatorExpression.cs" />
     <Compile Include="Compiler\Ast\PrefixOperatorExpression.cs" />
     <Compile Include="Compiler\Ast\Statement.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="Compiler\Parselets\IInfixParselet.cs" />
     <Compile Include="Compiler\Parselets\IPrecedence.cs" />
     <Compile Include="Compiler\Parselets\IPrefixParselet.cs" />
+    <Compile Include="Compiler\Parselets\NumberParselet.cs" />
     <Compile Include="Compiler\Parselets\PostfixOperatorParselet.cs" />
     <Compile Include="Compiler\Parselets\Precedence.cs" />
     <Compile Include="Compiler\Parselets\PrefixOperatorParslet.cs" />
