@@ -14,6 +14,7 @@ namespace RilaLang.Compiler
         {
             { "if", TokenType.If },
             { "elif", TokenType.ElseIf },
+            { "else", TokenType.Else },
             { "is", TokenType.Is },
             { "fun", TokenType.Function },
             { "int", TokenType.Int },

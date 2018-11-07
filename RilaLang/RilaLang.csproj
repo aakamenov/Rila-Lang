@@ -46,8 +46,10 @@
     <Compile Include="Compiler\Ast\AssignmentStatement.cs" />
     <Compile Include="Compiler\Ast\AstNode.cs" />
     <Compile Include="Compiler\Ast\BinaryOperatorExpression.cs" />
+    <Compile Include="Compiler\Ast\BlockExpression.cs" />
     <Compile Include="Compiler\Ast\Expression.cs" />
     <Compile Include="Compiler\Ast\IdentifierExpression.cs" />
+    <Compile Include="Compiler\Ast\IfStatement.cs" />
     <Compile Include="Compiler\Ast\Module.cs" />
     <Compile Include="Compiler\Ast\PostfixOperatorExpression.cs" />
     <Compile Include="Compiler\Ast\PrefixOperatorExpression.cs" />

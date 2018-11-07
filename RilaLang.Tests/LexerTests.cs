@@ -10,7 +10,7 @@ namespace RilaLang.Tests
         [Fact]
         public void LexProgram()
         {
-            var program = File.ReadAllText("TestPrograms/fib.rila");
+            var program = File.ReadAllText("TestPrograms/Lexer/fib.rila");
             var lexer = new Lexer(program);
             var tokens = new Token[] //Column numbers are not tested
             {
@@ -77,7 +77,7 @@ namespace RilaLang.Tests
         [Fact]
         public void LexIf()
         {
-            var program = File.ReadAllText("TestPrograms/if.rila");
+            var program = File.ReadAllText("TestPrograms/Lexer/if.rila");
             var lexer = new Lexer(program);
             var tokens = new Token[] //Column numbers are not tested
             {

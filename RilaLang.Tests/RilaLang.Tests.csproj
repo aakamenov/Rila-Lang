@@ -62,10 +62,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="TestPrograms\fib.rila">
+    <None Include="TestPrograms\Lexer\fib.rila">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="TestPrograms\if.rila">
+    <None Include="TestPrograms\Lexer\if.rila">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestPrograms\Parser\if.rila">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
