@@ -47,7 +47,6 @@
     <Compile Include="Compiler\Ast\AstNode.cs" />
     <Compile Include="Compiler\Ast\BinaryOperatorExpression.cs" />
     <Compile Include="Compiler\Ast\Expression.cs" />
-    <Compile Include="Compiler\Ast\ExpressionStatement.cs" />
     <Compile Include="Compiler\Ast\IdentifierExpression.cs" />
     <Compile Include="Compiler\Ast\PostfixOperatorExpression.cs" />
     <Compile Include="Compiler\Ast\PrefixOperatorExpression.cs" />

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RilaLang.Compiler.Ast
 {
-    public class Statement : AstNode
+    public abstract class Statement : AstNode
     {
     }
 }
