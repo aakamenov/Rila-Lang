@@ -7,7 +7,7 @@ using RilaLang.Compiler.Ast;
 
 namespace RilaLang.Compiler.Parselets
 {
-    public class PrefixOperatorParslet : IPrefixParselet
+    public class PrefixOperatorParslet : IPrefixParselet, IPrecedence
     {
         public Precedence Precedence { get; }
 

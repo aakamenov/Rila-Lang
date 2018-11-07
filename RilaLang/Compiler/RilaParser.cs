@@ -63,8 +63,7 @@ namespace RilaLang.Compiler
             else
                 throw new RilaParserException($"Unrecognised token: {token.Content}");
 
-            var p = GetPrecedence();
-            while (precedence < p)
+            while (precedence < GetPrecedence())
             {
                 token = Consume();
 
@@ -73,7 +72,7 @@ namespace RilaLang.Compiler
                     left = infixParselet.Parse(this, token, left);
                 }
                 else
-                    break;
+                    throw new RilaParserException($"Unrecognised token: {token.Content}");
             }
 
             return left;

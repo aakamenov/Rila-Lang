@@ -2,9 +2,8 @@
 
 namespace RilaLang.Compiler.Parselets
 {
-    public interface IInfixParselet
+    public interface IInfixParselet : IPrecedence
     {
-        Precedence Precedence { get; }
         Expression Parse(RilaParser parser, Token token, Expression lhs);
     }
 }

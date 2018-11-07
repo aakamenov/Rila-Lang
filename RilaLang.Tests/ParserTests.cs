@@ -29,12 +29,31 @@ namespace RilaLang.Tests
         [Fact]
         public void ParseEqualityExpression()
         {
-            var expression = "not a and (b >= c)";
+            var expression = "not a and b >= c";
             var lexer = new Lexer(expression);
             var parser = new RilaParser(lexer);
 
             var ast = parser.ParseExpression();
-            var a = 0;
+            Assert.IsType<BinaryOperatorExpression>(ast);
+            var and = ast as BinaryOperatorExpression;
+            Assert.True(and.Operation == TokenType.And);
+
+            Assert.IsType<PrefixOperatorExpression>(and.Lhs);
+            var not = and.Lhs as PrefixOperatorExpression;
+            Assert.True(not.Operation == TokenType.Not);
+            Assert.IsType<IdentifierExpression>(not.Rhs);
+            var a = not.Rhs as IdentifierExpression;
+            Assert.True(a.Name == "a");
+
+            Assert.IsType<BinaryOperatorExpression>(and.Rhs);
+            var eqGt = and.Rhs as BinaryOperatorExpression;
+            Assert.True(eqGt.Operation == TokenType.EqGreaterThan);
+            Assert.IsType<IdentifierExpression>(eqGt.Lhs);
+            var b = eqGt.Lhs as IdentifierExpression;
+            Assert.True(b.Name == "b");
+            Assert.IsType<IdentifierExpression>(eqGt.Rhs);
+            var c = eqGt.Rhs as IdentifierExpression;
+            Assert.True(c.Name == "c");
         }
 
         [Fact]
@@ -45,22 +64,22 @@ namespace RilaLang.Tests
             var parser = new RilaParser(lexer);
 
             var ast = parser.ParseExpression();
-            Assert.True(ast is BinaryOperatorExpression);
+            Assert.IsType<BinaryOperatorExpression>(ast);
 
             var op = ast as BinaryOperatorExpression;
             Assert.True(op.Operation == TokenType.Plus);
 
-            Assert.True(op.Lhs is BinaryOperatorExpression);
+            Assert.IsType<BinaryOperatorExpression>(op.Lhs);
             var lhs = op.Lhs as BinaryOperatorExpression;
 
             Assert.True(lhs.Operation == TokenType.Asterisk);
-            Assert.True(lhs.Lhs is IdentifierExpression);
+            Assert.IsType<IdentifierExpression>(lhs.Lhs);
             Assert.True((lhs.Lhs as IdentifierExpression).Name == "a");
 
-            Assert.True(lhs.Rhs is IdentifierExpression);
+            Assert.IsType<IdentifierExpression>(lhs.Rhs);
             Assert.True((lhs.Rhs as IdentifierExpression).Name == "b");
 
-            Assert.True(op.Rhs is IdentifierExpression);
+            Assert.IsType<IdentifierExpression>(op.Rhs);
             Assert.True((op.Rhs as IdentifierExpression).Name == "c");
         }
 
@@ -72,22 +91,22 @@ namespace RilaLang.Tests
             var parser = new RilaParser(lexer);
 
             var ast = parser.ParseExpression();
-            Assert.True(ast is BinaryOperatorExpression);
+            Assert.IsType<BinaryOperatorExpression>(ast);
 
             var op = ast as BinaryOperatorExpression;
             Assert.True(op.Operation == TokenType.Asterisk);
 
-            Assert.True(op.Rhs is BinaryOperatorExpression);
+            Assert.IsType<BinaryOperatorExpression>(op.Rhs);
             var rhs = op.Rhs as BinaryOperatorExpression;
 
             Assert.True(rhs.Operation == TokenType.Plus);
-            Assert.True(rhs.Lhs is IdentifierExpression);
+            Assert.IsType<IdentifierExpression>(rhs.Lhs);
             Assert.True((rhs.Lhs as IdentifierExpression).Name == "b");
 
-            Assert.True(rhs.Rhs is IdentifierExpression);
+            Assert.IsType<IdentifierExpression>(rhs.Rhs);
             Assert.True((rhs.Rhs as IdentifierExpression).Name == "c");
 
-            Assert.True(op.Lhs is IdentifierExpression);
+            Assert.IsType<IdentifierExpression>(op.Lhs);
             Assert.True((op.Lhs as IdentifierExpression).Name == "a");
         }
     }

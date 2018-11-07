@@ -40,6 +40,8 @@ namespace RilaLang.Compiler
             RegisterInfix(TokenType.Or, new BinaryOperatorParslet(Precedence.Or));
             RegisterInfix(TokenType.GreaterThan, new BinaryOperatorParslet(Precedence.Equality));
             RegisterInfix(TokenType.LessThan, new BinaryOperatorParslet(Precedence.Equality));
+            RegisterInfix(TokenType.EqGreaterThan, new BinaryOperatorParslet(Precedence.Equality));
+            RegisterInfix(TokenType.EqLessThan, new BinaryOperatorParslet(Precedence.Equality));
             RegisterInfix(TokenType.Equal, new BinaryOperatorParslet(Precedence.Equality));
             RegisterInfix(TokenType.NotEqual, new BinaryOperatorParslet(Precedence.Equality));
         }

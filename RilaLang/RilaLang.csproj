@@ -60,6 +60,7 @@
     <Compile Include="Compiler\Parselets\GroupParselet.cs" />
     <Compile Include="Compiler\Parselets\IdentifierParselet.cs" />
     <Compile Include="Compiler\Parselets\IInfixParselet.cs" />
+    <Compile Include="Compiler\Parselets\IPrecedence.cs" />
     <Compile Include="Compiler\Parselets\IPrefixParselet.cs" />
     <Compile Include="Compiler\Parselets\PostfixOperatorParselet.cs" />
     <Compile Include="Compiler\Parselets\Precedence.cs" />
