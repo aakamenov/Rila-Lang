@@ -40,9 +40,13 @@ namespace RilaLang.Tests
         }
 
         [Fact]
-        public void ParseIfStatement()
+        public void ParseIfStatements()
         {
+            var program = File.ReadAllText("TestPrograms/Parser/if.rila");
+            var lexer = new Lexer(program);
+            var parser = new RilaParser(lexer);
 
+            var ast = parser.Parse();
         }
 
         [Fact]

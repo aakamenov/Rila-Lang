@@ -39,7 +39,8 @@ namespace RilaLang.Compiler
             {
                 var wsCount = ConsumeWhiteSpace();
 
-                if (prevToken == TokenType.NewLine)
+                if (prevToken == TokenType.NewLine &&
+                    TryPeekChar(out char peek) && !("\n\r".Contains(peek.ToString()))) //Don't include WS on empty lines
                 {
                     token = new WSToken(wsCount, currentLine, currentColumn);
                     goto end;

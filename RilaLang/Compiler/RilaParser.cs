@@ -15,6 +15,7 @@ namespace RilaLang.Compiler
         private Lexer lexer;
         private List<Token> read;
         private StringBuilder errorSink;
+
         private uint currentIndentationLevel;
 
         public RilaParser(Lexer lexer) : base()
@@ -25,13 +26,21 @@ namespace RilaLang.Compiler
             errorSink = new StringBuilder();
         }
         
-        public AstNode Parse()
+        public Module Parse()
         {
-            AstNode root = null;
+            var statements = new List<AstNode>();
+            ConsumeNewLines();
 
             try
             {
-                root = ParseStatement();
+                var token = Peek();
+
+                while (token.TokenType != TokenType.EOF)
+                {
+                    statements.Add(ParseStatement());
+
+                    token = Peek();
+                }
             }
             catch(RilaParserException e)
             {
@@ -43,33 +52,28 @@ namespace RilaLang.Compiler
                     throw new RilaParserException(errorSink.ToString());
             }
 
-            return root;
+            return new Module(lexer.Filename, statements);
         }
 
         internal AstNode ParseStatement()
         {
             var token = Peek();
-            var statements = new List<AstNode>();
+            AstNode node = null;
 
-            ConsumeWhiteSpace();
-
-            while (token.TokenType != TokenType.EOF)
+            switch (token.TokenType)
             {
-                switch (token.TokenType)
-                {
-                    case TokenType.Identifier:
-                        statements.Add(ParseAssignment());
-                        break;
-                    default:
-                        statements.Add(ParseExpression());
-                        break;
-                }
-
-                ConsumeWhiteSpace();
-                token = Peek();
+                case TokenType.Identifier:
+                    node = ParseAssignment();
+                    break;
+                case TokenType.If:
+                    node = ParseIf();
+                    break;
+                default:
+                    node = ParseExpression();
+                    break;
             }
 
-            return new Module(lexer.Filename, statements);
+            return node;
         }
 
         internal Expression ParseExpression(Precedence precedence = Precedence.None)
@@ -99,15 +103,16 @@ namespace RilaLang.Compiler
             return left;
         }
 
-        internal bool Expect(TokenType type, out Token match)
+        internal bool Expect(out Token match, params TokenType[] types)
         {
             var token = Peek();
 
-            if (token.TokenType != type)
+            if (!types.Contains(token.TokenType))
             {
-                AppendError($"Expecting '{type.ToString()}', found {token.Content}", token);
-                match = null;
+                foreach(var type in types)
+                    AppendError($"Expecting '{type.ToString()}', found {token.Content}", token);
 
+                match = null;
                 return false;
             }
 
@@ -120,7 +125,7 @@ namespace RilaLang.Compiler
         {
             var identifier = Consume().Content;
             
-            if(!Expect(TokenType.Assign, out Token token))
+            if(!Expect(out Token token, TokenType.Assign))
             {
                 AppendError("Expecting '=' after identifier.", token);
 
@@ -129,27 +134,66 @@ namespace RilaLang.Compiler
 
             var expression = ParseExpression();
 
+            ExpectNewLine();
+
             return new AssignmentStatement(identifier, expression);
         }
 
-        private void ConsumeWhiteSpace()
+        private IfStatement ParseIf()
         {
-            while(true)
+            Consume();
+            var startingIndent = currentIndentationLevel;
+
+            var branches = new List<IfStatement.IfBranch>();
+            BlockExpression @else = null;
+
+            do
             {
+                var condition = ParseExpression();
+                ExpectNewLine();
+                var block = ParseBlock();
+
+                var branch = new IfStatement.IfBranch(condition, block);
+                branches.Add(branch);
+            }
+            while (startingIndent == currentIndentationLevel && ConsumeIf(TokenType.ElseIf));
+
+            if(startingIndent == currentIndentationLevel && ConsumeIf(TokenType.Else))
+            {
+                ExpectNewLine();
+                var block = ParseBlock();
+
+                @else = block;
+            }
+
+            return new IfStatement(branches, @else);
+        }
+
+        private BlockExpression ParseBlock()
+        {
+            var startingIndent = currentIndentationLevel;
+            var statements = new List<AstNode>();
+
+            if (!Expect(out Token ws, TokenType.WhiteSpace) ||
+                currentIndentationLevel >= (ws as WSToken).IndentationLevel)
+            {
+                AppendError($"Expecting an indented block.", ws);
+            }
+            else
+                currentIndentationLevel = (ws as WSToken).IndentationLevel;
+
+            while(startingIndent < currentIndentationLevel)
+            {
+                statements.Add(ParseStatement());
                 var next = Peek();
 
-                if (next.TokenType == TokenType.NewLine)
-                {
-                    Consume();
-                }
-                else if (next is WSToken)
-                {
-                    var ws = Consume() as WSToken;
-                    currentIndentationLevel = ws.IndentationLevel;
-                }
+                if (next.TokenType != TokenType.WhiteSpace)
+                    currentIndentationLevel = 0;
                 else
-                    break;
+                    CheckWs(next);
             }
+
+            return new BlockExpression(statements);
         }
 
         private Token Peek(int distance = 0)
@@ -173,6 +217,17 @@ namespace RilaLang.Compiler
             return token;
         }
 
+        private bool ConsumeIf(TokenType type)
+        {
+            if(Peek().TokenType == type)
+            {
+                Consume();
+                return true;
+            }
+
+            return false;
+        }
+
         private Precedence GetPrecedence()
         {
             var peek = Peek();
@@ -183,6 +238,11 @@ namespace RilaLang.Compiler
             }
 
             return Precedence.None;
+        }
+
+        private void ReportNewLineError(Token token)
+        {
+            AppendError("Expecting a new line", token);
         }
 
         private void AppendError(string error, Token token)
@@ -207,6 +267,36 @@ namespace RilaLang.Compiler
                 }
                 
                 break;
+            }
+        }
+
+        private void ExpectNewLine()
+        {
+            if (!Expect(out Token line, TokenType.NewLine, TokenType.EOF))
+                AppendError("Expecting a new line.", line);
+            else
+                ConsumeNewLines();
+        }
+
+        private bool CheckWs(Token token)
+        {
+            if(token is WSToken)
+            {
+                currentIndentationLevel = (token as WSToken).IndentationLevel;
+                Consume();
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private void ConsumeNewLines()
+        {
+            while (true)
+            {
+                if (!ConsumeIf(TokenType.NewLine))
+                    break;
             }
         }
     }

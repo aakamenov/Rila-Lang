@@ -12,7 +12,7 @@ namespace RilaLang.Compiler.Parselets
         public Expression Parse(RilaParser parser, Token token)
         {
             var expression = parser.ParseExpression();
-            parser.Expect(TokenType.RParen, out Token match);
+            parser.Expect(out Token match, TokenType.RParen);
 
             return expression;
         }

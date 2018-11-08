@@ -22,9 +22,9 @@ namespace RilaLang.Compiler.Ast
         }
 
         public IReadOnlyCollection<IfBranch> Branches { get; }
-        public IfBranch ElseBranch { get; }
+        public BlockExpression ElseBranch { get; }
 
-        public IfStatement(IList<IfBranch> branches, IfBranch elseBranch)
+        public IfStatement(IList<IfBranch> branches, BlockExpression elseBranch)
         {
             Branches = new ReadOnlyCollection<IfBranch>(branches);
             ElseBranch = elseBranch;
