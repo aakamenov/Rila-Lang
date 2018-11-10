@@ -39,6 +39,7 @@ namespace RilaLang.Compiler
                 while (token.TokenType != TokenType.EOF)
                 {
                     statements.Add(ParseStatement());
+                    ConsumeNewLines();
 
                     token = Peek();
                 }
@@ -64,12 +65,20 @@ namespace RilaLang.Compiler
             switch (token.TokenType)
             {
                 case TokenType.Identifier:
-                    node = ParseAssignment();
+                    {
+                        var peek = Peek(1).TokenType;
+
+                        if (peek == TokenType.Assign)
+                            node = ParseAssignment();
+                        else
+                            goto expression;
+                    }
                     break;
                 case TokenType.If:
                     node = ParseIf();
                     break;
                 default:
+                    expression:
                     node = ParseExpression();
                     break;
             }
@@ -104,6 +113,38 @@ namespace RilaLang.Compiler
             return left;
         }
 
+        internal Token Peek(int distance = 0)
+        {
+            while (read.Count <= distance)
+            {
+                read.Add(lexer.NextToken());
+            }
+
+            return read[distance];
+        }
+
+        internal Token Consume()
+        {
+            if (read.Count == 0)
+                Peek();
+
+            var token = read[0];
+            read.RemoveAt(0);
+
+            return token;
+        }
+
+        internal bool ConsumeIf(TokenType type)
+        {
+            if (Peek().TokenType == type)
+            {
+                Consume();
+                return true;
+            }
+
+            return false;
+        }
+
         internal bool Expect(out Token match, params TokenType[] types)
         {
             var token = Peek();
@@ -113,6 +154,7 @@ namespace RilaLang.Compiler
                 foreach(var type in types)
                     AppendError($"Expecting '{type.ToString()}', found {token.Content}", token);
 
+                MoveToNextLine();
                 match = null;
                 return false;
             }
@@ -122,16 +164,15 @@ namespace RilaLang.Compiler
             return true;
         }
 
+        internal void AppendError(string error, Token token)
+        {
+            errorSink.AppendLine($"Error on line {token.Line}:{token.Column} -> {error}");
+        }
+
         private AssignmentStatement ParseAssignment()
         {
             var identifier = Consume().Content;
-            
-            if(!Expect(out Token token, TokenType.Assign))
-            {
-                AppendError("Expecting '=' after identifier.", token);
-
-                return null;
-            }
+            Consume(); // =
 
             var expression = ParseExpression();
 
@@ -197,38 +238,6 @@ namespace RilaLang.Compiler
             return new BlockExpression(statements);
         }
 
-        private Token Peek(int distance = 0)
-        {
-            while(read.Count <= distance)
-            {
-                read.Add(lexer.NextToken());
-            }
-
-            return read[distance];
-        }
-
-        private Token Consume()
-        {
-            if(read.Count == 0)
-                Peek();
-
-            var token = read[0];
-            read.RemoveAt(0);
-
-            return token;
-        }
-
-        private bool ConsumeIf(TokenType type)
-        {
-            if(Peek().TokenType == type)
-            {
-                Consume();
-                return true;
-            }
-
-            return false;
-        }
-
         private Precedence GetPrecedence()
         {
             var peek = Peek();
@@ -244,11 +253,6 @@ namespace RilaLang.Compiler
         private void ReportNewLineError(Token token)
         {
             AppendError("Expecting a new line", token);
-        }
-
-        private void AppendError(string error, Token token)
-        {
-            errorSink.AppendLine($"Error on line {token.Line}:{token.Column} -> {error}");
             MoveToNextLine();
         }
 
@@ -273,10 +277,12 @@ namespace RilaLang.Compiler
 
         private void ExpectNewLine()
         {
-            if (!Expect(out Token line, TokenType.NewLine, TokenType.EOF))
-                AppendError("Expecting a new line.", line);
-            else
+            var peek = Peek();
+
+            if (peek.TokenType == TokenType.NewLine || peek.TokenType == TokenType.EOF)
                 ConsumeNewLines();
+            else
+                ReportNewLineError(peek);
         }
 
         private bool CheckWs(Token token)

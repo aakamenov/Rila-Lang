@@ -14,13 +14,103 @@ namespace RilaLang.Tests
     public class ParserTests
     {
         [Fact]
+        public void ParseFieldAccess()
+        {
+            var program = File.ReadAllText("TestPrograms/Parser/field-access.rila");
+            var lexer = new Lexer(program);
+            var parser = new RilaParser(lexer);
+
+            var ast = parser.Parse();
+
+            Assert.True(ast.Statements.Count == 2);
+
+            Assert.IsType<CallExpression>(ast.Statements.First());
+            var first = ast.Statements.First() as CallExpression;
+            Assert.IsType<IdentifierExpression>(first.Function);
+            Assert.True(first.Arguments.Count == 1);
+            Assert.IsType<FieldAccessExpression>(first.Arguments.First());
+            var arg = first.Arguments.First() as FieldAccessExpression;
+            Assert.IsType<IdentifierExpression>(arg.Lhs);
+
+            Assert.IsType<FieldAccessExpression>(arg.Rhs);
+            var inner = arg.Rhs as FieldAccessExpression;
+            Assert.IsType<CallExpression>(inner.Lhs);
+            Assert.IsType<IdentifierExpression>(inner.Rhs);
+
+            Assert.IsType<AssignmentStatement>(ast.Statements.ElementAt(1));
+            var assign = ast.Statements.ElementAt(1) as AssignmentStatement;
+            Assert.True(assign.Identifier == "myVar");
+
+            Assert.IsType<FieldAccessExpression>(assign.Rhs);
+            var assignFieldAccess = assign.Rhs as FieldAccessExpression;
+            Assert.IsType<IdentifierExpression>(assignFieldAccess.Lhs);
+
+            Assert.IsType<FieldAccessExpression>(assignFieldAccess.Rhs);
+            var assignInner1 = assignFieldAccess.Rhs as FieldAccessExpression;
+            Assert.IsType<CallExpression>(assignInner1.Lhs);
+
+            Assert.IsType<FieldAccessExpression>(assignInner1.Rhs);
+            var assignInner2 = assignInner1.Rhs as FieldAccessExpression;
+            Assert.IsType<IdentifierExpression>(assignInner2.Lhs);
+
+            Assert.IsType<FieldAccessExpression>(assignInner2.Rhs);
+            var assignInner3 = assignInner2.Rhs as FieldAccessExpression;
+            Assert.IsType<IdentifierExpression>(assignInner3.Lhs);
+            Assert.IsType<CallExpression>(assignInner3.Rhs);
+        }
+
+        [Fact]
+        public void ParseFunctionCall()
+        {
+            var program = File.ReadAllText("TestPrograms/Parser/function-call.rila");
+            var lexer = new Lexer(program);
+            var parser = new RilaParser(lexer);
+
+            var ast = parser.Parse();
+            Assert.True(ast.Statements.Count == 3);
+
+            Assert.IsType<AssignmentStatement>(ast.Statements.First());
+            var assign = ast.Statements.First() as AssignmentStatement;
+
+            Assert.IsType<CallExpression>(assign.Rhs);
+            var call = assign.Rhs as CallExpression;
+            Assert.IsType<IdentifierExpression>(call.Function);
+            Assert.True((call.Function as IdentifierExpression).Name == "myFun");
+            Assert.True(call.Arguments.Count == 4);
+            Assert.IsType<NumberExpression>(call.Arguments.First());
+            Assert.IsType<BinaryOperatorExpression>(call.Arguments.ElementAt(1));
+
+            Assert.IsType<CallExpression>(call.Arguments.ElementAt(2));
+            var nestedCall = call.Arguments.ElementAt(2) as CallExpression;
+            Assert.IsType<IdentifierExpression>(nestedCall.Function);
+            Assert.True((nestedCall.Function as IdentifierExpression).Name == "funCall");
+            Assert.True(nestedCall.Arguments.Count == 1);
+            Assert.IsType<NumberExpression>(nestedCall.Arguments.First());
+
+            Assert.IsType<IdentifierExpression>(call.Arguments.ElementAt(3));
+
+            Assert.IsType<CallExpression>(ast.Statements.ElementAt(1));
+            var secondCall = ast.Statements.ElementAt(1) as CallExpression;
+            Assert.True(secondCall.Arguments.Count == 0);
+            Assert.IsType<IdentifierExpression>(secondCall.Function);
+            Assert.True((secondCall.Function as IdentifierExpression).Name == "result");
+
+            Assert.IsType<CallExpression>(ast.Statements.ElementAt(2));
+            var thirdCall = ast.Statements.ElementAt(2) as CallExpression;
+            Assert.True(thirdCall.Arguments.Count == 1);
+            Assert.IsType<BinaryOperatorExpression>(thirdCall.Arguments.First());
+            Assert.IsType<IdentifierExpression>(thirdCall.Function);
+            Assert.True((thirdCall.Function as IdentifierExpression).Name == "oneMore");
+        }
+
+        [Fact]
         public void ParseAssignmentStatement()
         {
             var statement = "a = a + 1";
             var lexer = new Lexer(statement);
             var parser = new RilaParser(lexer);
 
-            var ast = parser.Parse() as Module;
+            var ast = parser.Parse();
             Assert.True(ast.Statements.Count == 1);
             var first = ast.Statements.First();
 

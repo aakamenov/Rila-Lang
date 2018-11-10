@@ -47,7 +47,9 @@
     <Compile Include="Compiler\Ast\AstNode.cs" />
     <Compile Include="Compiler\Ast\BinaryOperatorExpression.cs" />
     <Compile Include="Compiler\Ast\BlockExpression.cs" />
+    <Compile Include="Compiler\Ast\CallExpression.cs" />
     <Compile Include="Compiler\Ast\Expression.cs" />
+    <Compile Include="Compiler\Ast\FieldAccessExpression.cs" />
     <Compile Include="Compiler\Ast\IdentifierExpression.cs" />
     <Compile Include="Compiler\Ast\IfStatement.cs" />
     <Compile Include="Compiler\Ast\Module.cs" />
@@ -59,6 +61,7 @@
     <Compile Include="Compiler\Parselets\BinaryOperatorParslet.cs" />
     <Compile Include="Compiler\Parselets\BoolParselet.cs" />
     <Compile Include="Compiler\Parselets\CallParselet.cs" />
+    <Compile Include="Compiler\Parselets\FieldAccessParselet.cs" />
     <Compile Include="Compiler\Parselets\GroupParselet.cs" />
     <Compile Include="Compiler\Parselets\IdentifierParselet.cs" />
     <Compile Include="Compiler\Parselets\IInfixParselet.cs" />

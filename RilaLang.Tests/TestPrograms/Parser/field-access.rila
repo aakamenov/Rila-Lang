@@ -1,0 +1,3 @@
+﻿funCall(string.IsNullOrEmpty("string").FalseString)
+
+myVar = variable.MethodCall().Field.MoreFields.AnotherCall()

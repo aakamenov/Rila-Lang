@@ -91,6 +91,9 @@ namespace RilaLang.Compiler
                             token = new Token(TokenType.Dot, ".", currentLine, currentColumn);
                     }
                     break;
+                case ',':
+                    token = new Token(TokenType.Comma, ",", currentLine, currentColumn);
+                    break;
                 case '0':
                 case '1':
                 case '2':
