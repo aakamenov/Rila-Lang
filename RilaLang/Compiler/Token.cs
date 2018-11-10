@@ -17,8 +17,6 @@ namespace RilaLang.Compiler
             { "else", TokenType.Else },
             { "is", TokenType.Is },
             { "fun", TokenType.Function },
-            { "int", TokenType.Int },
-            { "string", TokenType.String },
             { "for", TokenType.For },
             { "in", TokenType.In },
             { "return", TokenType.Return },
@@ -76,9 +74,6 @@ namespace RilaLang.Compiler
         WhiteSpace,
 
         Identifier,
-        Int,
-        Bool,
-        String,
 
         StringLiteral,
         NumericLiteral,
