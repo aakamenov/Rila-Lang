@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using RilaLang.Compiler.Ast;
 using RilaLang.Compiler.Parselets;
 using System.Runtime.CompilerServices;
@@ -10,7 +9,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("RilaLang.Tests")]
 namespace RilaLang.Compiler
 {
-    public class RilaParser : ParserBase
+    public partial class RilaParser
     {
         private Lexer lexer;
         private List<Token> read;
@@ -18,8 +17,10 @@ namespace RilaLang.Compiler
 
         private uint currentIndentationLevel;
 
-        public RilaParser(Lexer lexer) : base()
+        public RilaParser(Lexer lexer)
         {
+            ConfigureExpressionRules();
+
             this.lexer = lexer;
 
             read = new List<Token>();

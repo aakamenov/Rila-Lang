@@ -11,8 +11,8 @@ namespace RilaLang.Compiler.Ast
     {
         public class IfBranch
         {
-            Expression Condition { get; }
-            BlockExpression Block { get; }
+            public Expression Condition { get; }
+            public BlockExpression Block { get; }
 
             public IfBranch(Expression condition, BlockExpression block)
             {

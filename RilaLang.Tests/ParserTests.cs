@@ -47,6 +47,47 @@ namespace RilaLang.Tests
             var parser = new RilaParser(lexer);
 
             var ast = parser.Parse();
+            Assert.True(ast.Statements.Count == 1);
+            Assert.IsType<IfStatement>(ast.Statements.First());
+
+            var ifStmt = ast.Statements.First() as IfStatement;
+            Assert.True(ifStmt.Branches.Count == 3);
+
+            var first = ifStmt.Branches.First();
+            Assert.IsType<BinaryOperatorExpression>(first.Condition);
+            Assert.True(first.Block.Statements.Count == 3);
+            Assert.IsType<AssignmentStatement>(first.Block.Statements.First());
+            Assert.IsType<AssignmentStatement>(first.Block.Statements.ElementAt(1));
+            Assert.IsType<IfStatement>(first.Block.Statements.ElementAt(2));
+
+            var firstNestedIf = first.Block.Statements.ElementAt(2) as IfStatement;
+            Assert.True(firstNestedIf.Branches.Count == 1);
+            Assert.IsType<BinaryOperatorExpression>(firstNestedIf.Branches.First().Condition);
+            Assert.IsType<AssignmentStatement>(firstNestedIf.Branches.First().Block.Statements.First());
+
+            var second = ifStmt.Branches.ElementAt(1);
+            Assert.IsType<BoolExpression>(second.Condition);
+            Assert.True(second.Block.Statements.Count == 1);
+            Assert.IsType<AssignmentStatement>(second.Block.Statements.First());
+
+            var third = ifStmt.Branches.ElementAt(2);
+            Assert.IsType<BoolExpression>(third.Condition);
+            Assert.True(third.Block.Statements.Count == 1);
+            Assert.IsType<IfStatement>(third.Block.Statements.First());
+
+            var thirdNestedIf = third.Block.Statements.First() as IfStatement;
+            Assert.True(thirdNestedIf.Branches.Count == 2);
+            Assert.True(thirdNestedIf.ElseBranch == null);
+            Assert.IsType<BoolExpression>(thirdNestedIf.Branches.First().Condition);
+            Assert.True(thirdNestedIf.Branches.First().Block.Statements.Count == 1);
+            Assert.IsType<AssignmentStatement>(thirdNestedIf.Branches.First().Block.Statements.First());
+            Assert.IsType<BoolExpression>(thirdNestedIf.Branches.ElementAt(1).Condition);
+            Assert.True(thirdNestedIf.Branches.ElementAt(1).Block.Statements.Count == 1);
+            Assert.IsType<AssignmentStatement>(thirdNestedIf.Branches.ElementAt(1).Block.Statements.First());
+
+            Assert.True(ifStmt.ElseBranch != null);
+            Assert.True(ifStmt.ElseBranch.Statements.Count == 1);
+            Assert.IsType<AssignmentStatement>(ifStmt.ElseBranch.Statements.First());
         }
 
         [Fact]

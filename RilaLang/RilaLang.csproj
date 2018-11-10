@@ -69,7 +69,7 @@
     <Compile Include="Compiler\Parselets\Precedence.cs" />
     <Compile Include="Compiler\Parselets\PrefixOperatorParslet.cs" />
     <Compile Include="Compiler\Parselets\StringParselet.cs" />
-    <Compile Include="Compiler\ParserBase.cs" />
+    <Compile Include="Compiler\RilaParser.ExpressionsConfig.cs" />
     <Compile Include="Compiler\RilaParser.cs" />
     <Compile Include="Compiler\RilaParserException.cs" />
     <Compile Include="Compiler\Token.cs" />

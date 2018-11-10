@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RilaLang.Compiler.Parselets;
 
 namespace RilaLang.Compiler
 {
-    public abstract class ParserBase
+    public partial class RilaParser
     {
-        protected Dictionary<TokenType, IPrefixParselet> prefixParselets;
-        protected Dictionary<TokenType, IInfixParselet> infixParselets;
+        private Dictionary<TokenType, IPrefixParselet> prefixParselets;
+        private Dictionary<TokenType, IInfixParselet> infixParselets;
 
-        internal ParserBase()
+        private void ConfigureExpressionRules()
         {
             prefixParselets = new Dictionary<TokenType, IPrefixParselet>();
             infixParselets = new Dictionary<TokenType, IInfixParselet>();
