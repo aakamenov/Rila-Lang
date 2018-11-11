@@ -169,6 +169,12 @@ namespace RilaLang.Compiler
                 case '%':
                     token = new Token(TokenType.Modulo, "%", currentIndentation, currentLine, currentColumn);
                     break;
+                case '[':
+                    token = new Token(TokenType.LSquare, "[", currentIndentation, currentLine, currentColumn);
+                    break;
+                case ']':
+                    token = new Token(TokenType.RSquare, "]", currentIndentation, currentLine, currentColumn);
+                    break;
                 default:
                     {
                         var word = ReadWord(next);

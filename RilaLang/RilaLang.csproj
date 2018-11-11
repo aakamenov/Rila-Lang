@@ -55,6 +55,7 @@
     <Compile Include="Compiler\Ast\ForLoopStatement.cs" />
     <Compile Include="Compiler\Ast\IdentifierExpression.cs" />
     <Compile Include="Compiler\Ast\IfStatement.cs" />
+    <Compile Include="Compiler\Ast\IndexerExpression.cs" />
     <Compile Include="Compiler\Ast\Module.cs" />
     <Compile Include="Compiler\Ast\PostfixOperatorExpression.cs" />
     <Compile Include="Compiler\Ast\PrefixOperatorExpression.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="Compiler\Parselets\GroupParselet.cs" />
     <Compile Include="Compiler\Parselets\IdentifierParselet.cs" />
     <Compile Include="Compiler\Parselets\IInfixParselet.cs" />
+    <Compile Include="Compiler\Parselets\IndexerParselet.cs" />
     <Compile Include="Compiler\Parselets\IPrecedence.cs" />
     <Compile Include="Compiler\Parselets\IPrefixParselet.cs" />
     <Compile Include="Compiler\Parselets\NumberParselet.cs" />

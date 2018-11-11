@@ -151,6 +151,38 @@ namespace RilaLang.Tests
         }
 
         [Fact]
+        public void ParseIndexerExpression()
+        {
+            var program = "a = arr[0]\nb = arr[myVar]\nc = a + b + arr[a - b]";
+            var lexer = new Lexer(program);
+            var parser = new RilaParser(lexer);
+
+            var ast = parser.Parse();
+            Assert.True(ast.Statements.Count(x => x is AssignmentStatement) == 3);
+
+            var a = ast.Statements.First() as AssignmentStatement;
+            Assert.IsType<IndexerExpression>(a.Rhs);
+            var aIndexer = a.Rhs as IndexerExpression;
+            Assert.True(aIndexer.Identifier.Name == "arr");
+            Assert.IsType<NumberExpression>(aIndexer.Expression);
+
+            var b = ast.Statements.ElementAt(1) as AssignmentStatement;
+            Assert.IsType<IndexerExpression>(b.Rhs);
+            var bIndexer = b.Rhs as IndexerExpression;
+            Assert.True(bIndexer.Identifier.Name == "arr");
+            Assert.IsType<IdentifierExpression>(bIndexer.Expression);
+
+            var c = ast.Statements.ElementAt(2) as AssignmentStatement;
+            Assert.IsType<BinaryOperatorExpression>(c.Rhs);
+            Assert.IsType<BinaryOperatorExpression>((c.Rhs as BinaryOperatorExpression).Lhs);
+
+            Assert.IsType<IndexerExpression>((c.Rhs as BinaryOperatorExpression).Rhs);
+            var cIndexer = (c.Rhs as BinaryOperatorExpression).Rhs as IndexerExpression;
+            Assert.True(cIndexer.Identifier.Name == "arr");
+            Assert.IsType<BinaryOperatorExpression>(cIndexer.Expression);
+        }
+
+        [Fact]
         public void ParseFunctionCall()
         {
             var program = File.ReadAllText("TestPrograms/Parser/function-call.rila");

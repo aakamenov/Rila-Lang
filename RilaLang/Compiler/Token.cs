@@ -94,6 +94,8 @@ namespace RilaLang.Compiler
         Arrow,
         LParen,
         RParen,
+        LSquare,
+        RSquare,
         
         Function,
         If,
