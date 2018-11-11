@@ -60,6 +60,7 @@
     <Compile Include="Compiler\Ast\PrefixOperatorExpression.cs" />
     <Compile Include="Compiler\Ast\Statement.cs" />
     <Compile Include="Compiler\Ast\ValueExpression.cs" />
+    <Compile Include="Compiler\Ast\WhileLoopStatement.cs" />
     <Compile Include="Compiler\Lexer.cs" />
     <Compile Include="Compiler\Parselets\BinaryOperatorParslet.cs" />
     <Compile Include="Compiler\Parselets\BoolParselet.cs" />

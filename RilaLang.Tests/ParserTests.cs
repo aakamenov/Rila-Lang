@@ -14,6 +14,51 @@ namespace RilaLang.Tests
     public class ParserTests
     {
         [Fact]
+        public void ParseWhileLoop()
+        {
+            var program = File.ReadAllText("TestPrograms/Parser/while.rila");
+            var lexer = new Lexer(program);
+            var parser = new RilaParser(lexer);
+
+            var ast = parser.Parse();
+            Assert.True(ast.Statements.Count == 2);
+
+            Assert.IsType<WhileLoopStatement>(ast.Statements.First());
+            var whileLoop = ast.Statements.First() as WhileLoopStatement;
+
+            Assert.IsType<BinaryOperatorExpression>(whileLoop.Condition);
+            var condition = whileLoop.Condition as BinaryOperatorExpression;
+            Assert.IsType<IdentifierExpression>(condition.Lhs);
+            Assert.True((condition.Lhs as IdentifierExpression).Name == "i");
+            Assert.IsType<NumberExpression>(condition.Rhs);
+            Assert.True((condition.Rhs as NumberExpression).Value == 100);
+            Assert.True(condition.Operation == TokenType.GreaterThan);
+
+            Assert.True(whileLoop.Block.Statements.Count == 1);
+            Assert.IsType<IfStatement>(whileLoop.Block.Statements.First());
+            var ifStmt = whileLoop.Block.Statements.First() as IfStatement;
+            Assert.True(ifStmt.Branches.Count == 1);
+
+            Assert.IsType<ForLoopStatement>(ifStmt.Branches.First().Block.Statements.First());
+            var nestedFor = ifStmt.Branches.First().Block.Statements.First() as ForLoopStatement;
+            Assert.True(nestedFor.VariableName == "j");
+            Assert.IsType<BinaryOperatorExpression>(nestedFor.InExpression);
+            var nestedForExpression = nestedFor.InExpression as BinaryOperatorExpression;
+            Assert.IsType<NumberExpression>(nestedForExpression.Lhs);
+            Assert.True((nestedForExpression.Lhs as NumberExpression).Value == 0);
+            Assert.IsType<IdentifierExpression>(nestedForExpression.Rhs);
+            Assert.True((nestedForExpression.Rhs as IdentifierExpression).Name == "i");
+            Assert.True(nestedFor.Block.Statements.Count == 2);
+            Assert.IsType<FieldAccessExpression>(nestedFor.Block.Statements.First());
+            Assert.IsType<FieldAccessExpression>(nestedFor.Block.Statements.ElementAt(1));
+
+            Assert.True(ifStmt.ElseBranch.Statements.Count == 1);
+            Assert.IsType<ContinueStatement>(ifStmt.ElseBranch.Statements.First());
+
+            Assert.IsType<AssignmentStatement>(ast.Statements.ElementAt(1));
+        }
+
+        [Fact]
         public void ParseForLoop()
         {
             var program = File.ReadAllText("TestPrograms/Parser/for.rila");
@@ -33,6 +78,7 @@ namespace RilaLang.Tests
             Assert.True((forExpression.Lhs as NumberExpression).Value == 0);
             Assert.IsType<NumberExpression>(forExpression.Rhs);
             Assert.True((forExpression.Rhs as NumberExpression).Value == 100);
+            Assert.True(forExpression.Operation == TokenType.Range);
 
             Assert.True(forLoop.Block.Statements.Count == 1);
             Assert.IsType<IfStatement>(forLoop.Block.Statements.First());

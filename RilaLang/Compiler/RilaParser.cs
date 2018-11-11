@@ -79,6 +79,9 @@ namespace RilaLang.Compiler
                 case TokenType.For:
                     node = ParseForLoop();
                     break;
+                case TokenType.While:
+                    node = ParseWhileLoop();
+                    break;
                 case TokenType.Continue:
                     node = ParseContinueStatement();
                     break;
@@ -250,6 +253,16 @@ namespace RilaLang.Compiler
             var block = ParseBlock();
 
             return new ForLoopStatement(identifier.Content, inExpression, block);
+        }
+
+        private WhileLoopStatement ParseWhileLoop()
+        {
+            Consume(); // while
+
+            var condition = ParseExpression();
+            var block = ParseBlock();
+
+            return new WhileLoopStatement(condition, block);
         }
 
         private ContinueStatement ParseContinueStatement()
