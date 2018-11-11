@@ -39,7 +39,6 @@ namespace RilaLang.Compiler
                 while (token.TokenType != TokenType.EOF)
                 {
                     statements.Add(ParseStatement());
-                    ConsumeNewLines();
 
                     token = Peek();
                 }
@@ -77,9 +76,19 @@ namespace RilaLang.Compiler
                 case TokenType.If:
                     node = ParseIf();
                     break;
+                case TokenType.For:
+                    node = ParseForLoop();
+                    break;
+                case TokenType.Continue:
+                    node = ParseContinueStatement();
+                    break;
+                case TokenType.Break:
+                    node = ParseBreakStatement();
+                    break;
                 default:
                     expression:
                     node = ParseExpression();
+                    ConsumeNewLines();
                     break;
             }
 
@@ -192,7 +201,6 @@ namespace RilaLang.Compiler
             do
             {
                 var condition = ParseExpression();
-                ExpectNewLine();
                 var block = ParseBlock();
 
                 var branch = new IfStatement.IfBranch(condition, block);
@@ -202,9 +210,7 @@ namespace RilaLang.Compiler
 
             if(startingIndent == currentIndentationLevel && ConsumeIf(TokenType.Else))
             {
-                ExpectNewLine();
                 var block = ParseBlock();
-
                 @else = block;
             }
 
@@ -213,29 +219,51 @@ namespace RilaLang.Compiler
 
         private BlockExpression ParseBlock()
         {
+            if (!PrepareForBlock())
+                return null;
+
             var startingIndent = currentIndentationLevel;
             var statements = new List<AstNode>();
-
-            if (!Expect(out Token ws, TokenType.WhiteSpace) ||
-                currentIndentationLevel >= (ws as WSToken).IndentationLevel)
-            {
-                AppendError($"Expecting an indented block.", ws);
-            }
-            else
-                currentIndentationLevel = (ws as WSToken).IndentationLevel;
-
-            while(startingIndent < currentIndentationLevel)
+            
+            while(startingIndent == currentIndentationLevel)
             {
                 statements.Add(ParseStatement());
                 var next = Peek();
 
-                if (next.TokenType != TokenType.WhiteSpace)
-                    currentIndentationLevel = 0;
-                else
-                    CheckWs(next);
+                CheckIndentation(next);
             }
 
             return new BlockExpression(statements);
+        }
+
+        private ForLoopStatement ParseForLoop()
+        {
+            Consume(); // for
+
+            if (!Expect(out Token identifier, TokenType.Identifier))
+                return null;
+
+            if (!Expect(out Token @in, TokenType.In))
+                return null;
+
+            var inExpression = ParseExpression();
+            var block = ParseBlock();
+
+            return new ForLoopStatement(identifier.Content, inExpression, block);
+        }
+
+        private ContinueStatement ParseContinueStatement()
+        {
+            Consume(); // continue
+            ExpectNewLine();
+            return new ContinueStatement();
+        }
+
+        private BreakStatement ParseBreakStatement()
+        {
+            Consume(); // break
+            ExpectNewLine();
+            return new BreakStatement();
         }
 
         private Precedence GetPrecedence()
@@ -275,27 +303,51 @@ namespace RilaLang.Compiler
             }
         }
 
-        private void ExpectNewLine()
+        private bool ExpectNewLine()
         {
             var peek = Peek();
 
             if (peek.TokenType == TokenType.NewLine || peek.TokenType == TokenType.EOF)
+            {
                 ConsumeNewLines();
+                return true;
+            }
             else
+            {
                 ReportNewLineError(peek);
+                return false;
+            }
         }
 
-        private bool CheckWs(Token token)
+        private bool ExpectIndentation()
         {
-            if(token is WSToken)
+            var peek = Peek();
+
+            if (peek.TokenType == TokenType.EOF)
+                return false;
+
+            if (currentIndentationLevel > peek.IndentationLevel)
             {
-                currentIndentationLevel = (token as WSToken).IndentationLevel;
-                Consume();
+                AppendError($"Expecting an indented block.", peek);
+
+                return false;
+            }
+            else
+            {
+                currentIndentationLevel = peek.IndentationLevel;
 
                 return true;
             }
+        }
 
-            return false;
+        private bool PrepareForBlock()
+        {
+            return ExpectNewLine() && ExpectIndentation();
+        }
+
+        private void CheckIndentation(Token token)
+        {
+            currentIndentationLevel = token.IndentationLevel;
         }
 
         private void ConsumeNewLines()

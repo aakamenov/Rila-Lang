@@ -9,6 +9,7 @@ namespace RilaLang.Compiler
         public string Content { get; }
         public uint Line { get; }
         public uint Column { get; }
+        public uint IndentationLevel { get; }
 
         private static Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>()
         {
@@ -24,13 +25,16 @@ namespace RilaLang.Compiler
             { "false", TokenType.False },
             { "not", TokenType.Not },
             { "and", TokenType.And },
-            { "or", TokenType.Or }
+            { "or", TokenType.Or },
+            { "break", TokenType.Break },
+            { "continue", TokenType.Continue }
         };
 
-        public Token(TokenType type, string content, uint line, uint column)
+        public Token(TokenType type, string content, uint indentationLevel, uint line, uint column)
         {
             TokenType = type;
             Content = content;
+            IndentationLevel = indentationLevel;
             Line = line;
             Column = column;
         }
@@ -50,21 +54,9 @@ namespace RilaLang.Compiler
         public override string ToString()
         {
             var content = string.IsNullOrEmpty(Content) ? "None" : Content;
-            return $"Token Type: {TokenType}, Content: {content}, Line: {Line}, Column: {Column}";
+            return $"Token Type: {TokenType}, Content: {content}, Indentation: {IndentationLevel}, Line: {Line}, Column: {Column}";
         }
     }
-
-    public class WSToken : Token
-    {
-        public uint IndentationLevel { get; }
-
-        public WSToken(uint indentationLevel, uint line, uint column) 
-            : base(TokenType.WhiteSpace, string.Empty, line, column)
-        {
-            IndentationLevel = indentationLevel;
-        }
-    }
-
 
     public enum TokenType
     {
@@ -112,6 +104,8 @@ namespace RilaLang.Compiler
         In,
         Return,
         True,
-        False
+        False,
+        Break,
+        Continue
     }
 }

@@ -47,9 +47,12 @@
     <Compile Include="Compiler\Ast\AstNode.cs" />
     <Compile Include="Compiler\Ast\BinaryOperatorExpression.cs" />
     <Compile Include="Compiler\Ast\BlockExpression.cs" />
+    <Compile Include="Compiler\Ast\BreakStatement.cs" />
     <Compile Include="Compiler\Ast\CallExpression.cs" />
+    <Compile Include="Compiler\Ast\ContinueStatement.cs" />
     <Compile Include="Compiler\Ast\Expression.cs" />
     <Compile Include="Compiler\Ast\FieldAccessExpression.cs" />
+    <Compile Include="Compiler\Ast\ForLoopStatement.cs" />
     <Compile Include="Compiler\Ast\IdentifierExpression.cs" />
     <Compile Include="Compiler\Ast\IfStatement.cs" />
     <Compile Include="Compiler\Ast\Module.cs" />

@@ -71,6 +71,9 @@
     <None Include="TestPrograms\Parser\field-access.rila">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="TestPrograms\Parser\for.rila">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="TestPrograms\Parser\function-call.rila">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

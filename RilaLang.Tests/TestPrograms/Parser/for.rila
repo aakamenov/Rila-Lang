@@ -1,0 +1,10 @@
+﻿for i in 0..100
+
+	if i % 2 == 0
+		for j in 0..i
+			Console.WriteLine(j)
+			Console.WriteLine("---")
+	else
+		continue
+
+a = 5

@@ -14,6 +14,7 @@ namespace RilaLang.Compiler
         private int position;
         private uint currentLine;
         private uint currentColumn;
+        private uint currentIndentation;
         private readonly int sourceLength;
         private TokenType prevToken;
 
@@ -29,7 +30,7 @@ namespace RilaLang.Compiler
         {
             if (AtEof)
             {
-                return new Token(TokenType.EOF, string.Empty, currentLine, currentColumn);
+                return new Token(TokenType.EOF, string.Empty, 0, currentLine, currentColumn);
             }
 
             var next = source[position];
@@ -42,12 +43,8 @@ namespace RilaLang.Compiler
                 if (prevToken == TokenType.NewLine &&
                     TryPeekChar(out char peek) && !("\n\r".Contains(peek.ToString()))) //Don't include WS on empty lines
                 {
-                    token = new WSToken(wsCount, currentLine, currentColumn);
-                    goto end;
+                    currentIndentation = wsCount;
                 }
-
-                if (wsCount == 1)
-                    AdvancePosition();
 
                 next = source[position];
             }
@@ -55,7 +52,7 @@ namespace RilaLang.Compiler
             switch(next)
             {
                 case '\"':
-                    token = new Token(TokenType.StringLiteral, ReadStringLiteral(), currentLine, currentColumn);
+                    token = new Token(TokenType.StringLiteral, ReadStringLiteral(), currentIndentation, currentLine, currentColumn);
                     break;
                 case '\r':
                 case '\n':
@@ -70,29 +67,29 @@ namespace RilaLang.Compiler
                             builder.Append(peekChar);
                         }
                     
-                        token = new Token(TokenType.NewLine, builder.ToString(), currentLine, currentColumn);
+                        token = new Token(TokenType.NewLine, builder.ToString(), currentIndentation, currentLine, currentColumn);
                         NewLine();
                     }
                     break;
                 case '(':
-                    token = new Token(TokenType.LParen, "(", currentLine, currentColumn);
+                    token = new Token(TokenType.LParen, "(", currentIndentation, currentLine, currentColumn);
                     break;
                 case ')':
-                    token = new Token(TokenType.RParen, ")", currentLine, currentColumn);
+                    token = new Token(TokenType.RParen, ")", currentIndentation, currentLine, currentColumn);
                     break;
                 case '.':
                     { 
                         if(TryPeekChar(out char peeked) && peeked == '.')
                         {
-                            token = new Token(TokenType.Range, "..", currentLine, currentColumn);
+                            token = new Token(TokenType.Range, "..", currentIndentation, currentLine, currentColumn);
                             AdvancePosition();
                         }
                         else
-                            token = new Token(TokenType.Dot, ".", currentLine, currentColumn);
+                            token = new Token(TokenType.Dot, ".", currentIndentation, currentLine, currentColumn);
                     }
                     break;
                 case ',':
-                    token = new Token(TokenType.Comma, ",", currentLine, currentColumn);
+                    token = new Token(TokenType.Comma, ",", currentIndentation, currentLine, currentColumn);
                     break;
                 case '0':
                 case '1':
@@ -104,13 +101,13 @@ namespace RilaLang.Compiler
                 case '7':
                 case '8':
                 case '9':
-                    token = new Token(TokenType.NumericLiteral, ReadNumericLiteral(next), currentLine, currentColumn);
+                    token = new Token(TokenType.NumericLiteral, ReadNumericLiteral(next), currentIndentation, currentLine, currentColumn);
                     break;
                 case '!':
                     {
                         if (TryPeekChar(out char peeked) && peeked == '=')
                         {
-                            token = new Token(TokenType.NotEqual, "!=", currentLine, currentColumn);
+                            token = new Token(TokenType.NotEqual, "!=", currentIndentation, currentLine, currentColumn);
                             AdvancePosition();
                         }
                         else
@@ -121,56 +118,56 @@ namespace RilaLang.Compiler
                     {
                         if (TryPeekChar(out char peeked) && peeked == '=')
                         {
-                            token = new Token(TokenType.Equal, "==", currentLine, currentColumn);
+                            token = new Token(TokenType.Equal, "==", currentIndentation, currentLine, currentColumn);
                             AdvancePosition();
                         }
                         else
-                            token = new Token(TokenType.Assign, "=", currentLine, currentColumn);
+                            token = new Token(TokenType.Assign, "=", currentIndentation, currentLine, currentColumn);
                     }
                     break;
                 case '+':
-                    token = new Token(TokenType.Plus, "+", currentLine, currentColumn);
+                    token = new Token(TokenType.Plus, "+", currentIndentation, currentLine, currentColumn);
                     break;
                 case '>':
                     {
                         if (TryPeekChar(out char peeked) && peeked == '=')
                         {
-                            token = new Token(TokenType.EqGreaterThan, ">=", currentLine, currentColumn);
+                            token = new Token(TokenType.EqGreaterThan, ">=", currentIndentation, currentLine, currentColumn);
                             AdvancePosition();
                         }
                         else
-                            token = new Token(TokenType.GreaterThan, ">", currentLine, currentColumn);
+                            token = new Token(TokenType.GreaterThan, ">", currentIndentation, currentLine, currentColumn);
                     }
                     break;
                 case '<':
                     {
                         if (TryPeekChar(out char peeked) && peeked == '=')
                         {
-                            token = new Token(TokenType.EqLessThan, "=<", currentLine, currentColumn);
+                            token = new Token(TokenType.EqLessThan, "=<", currentIndentation, currentLine, currentColumn);
                         }
                         else
-                            token = new Token(TokenType.LessThan, "<", currentLine, currentColumn);
+                            token = new Token(TokenType.LessThan, "<", currentIndentation, currentLine, currentColumn);
                     }
                     break;
                 case '-':
                     {
                         if (TryPeekChar(out char peeked) && peeked == '>')
                         {
-                            token = new Token(TokenType.Arrow, "->", currentLine, currentColumn);
+                            token = new Token(TokenType.Arrow, "->", currentIndentation, currentLine, currentColumn);
                             AdvancePosition();
                         }
                         else
-                            token = new Token(TokenType.Minus, "-", currentLine, currentColumn);
+                            token = new Token(TokenType.Minus, "-", currentIndentation, currentLine, currentColumn);
                     }
                     break;
                 case '/':
-                    token = new Token(TokenType.Slash, "/", currentLine, currentColumn);
+                    token = new Token(TokenType.Slash, "/", currentIndentation, currentLine, currentColumn);
                     break;
                 case '*':
-                    token = new Token(TokenType.Asterisk, "*", currentLine, currentColumn);
+                    token = new Token(TokenType.Asterisk, "*", currentIndentation, currentLine, currentColumn);
                     break;
                 case '%':
-                    token = new Token(TokenType.Modulo, "%", currentLine, currentColumn);
+                    token = new Token(TokenType.Modulo, "%", currentIndentation, currentLine, currentColumn);
                     break;
                 default:
                     {
@@ -178,19 +175,18 @@ namespace RilaLang.Compiler
 
                         if (Token.TryGetKeyword(word, out TokenType tokenType))
                         {
-                            token = new Token(tokenType, word, currentLine, currentColumn);
+                            token = new Token(tokenType, word, currentIndentation, currentLine, currentColumn);
                         }
                         else
                         {
-                            token = new Token(TokenType.Identifier, word, currentLine, currentColumn);
+                            token = new Token(TokenType.Identifier, word, currentIndentation, currentLine, currentColumn);
                         }
                     }
                     break;
             }
 
-            end:
-                AdvancePosition();
-                prevToken = token.TokenType;
+            AdvancePosition();
+            prevToken = token.TokenType;
 
             return token;
         }
@@ -209,15 +205,19 @@ namespace RilaLang.Compiler
 
         private uint ConsumeWhiteSpace()
         {
-            var consumed = 1u;
+            var consumed = 0u;
+            var current = source[position];
 
-            while(TryPeekChar(out char next))
+            while(IsWhiteSpace(current))
             {
-                if (!IsWhiteSpace(next))
+                consumed++;
+
+                if (TryPeekChar(out char next))
+                    current = next;
+                else
                     break;
 
                 AdvancePosition();
-                consumed++;
             }
 
             return consumed;
@@ -232,6 +232,7 @@ namespace RilaLang.Compiler
         {
             currentLine++;
             currentColumn = 0;
+            currentIndentation = 0;
         }
 
         private void AdvancePosition()
