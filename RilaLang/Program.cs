@@ -10,6 +10,7 @@ namespace RilaLang
     {
         static void Main(string[] args)
         {
+
         }
     }
 }

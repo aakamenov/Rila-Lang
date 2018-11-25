@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace RilaLang.Compiler.Ast
 {
+    using DLR = System.Linq.Expressions;
+
     public class IndexerExpression : Expression
     {
         public IdentifierExpression Identifier { get; }
@@ -15,6 +17,11 @@ namespace RilaLang.Compiler.Ast
         {
             Identifier = identifier;
             Expression = expression;
+        }
+
+        public override DLR.Expression GenerateExpressionTree(GenScope scope)
+        {
+            return DLR.Expression.ArrayIndex(Identifier.GenerateExpressionTree(scope), Expression.GenerateExpressionTree(scope));
         }
     }
 }

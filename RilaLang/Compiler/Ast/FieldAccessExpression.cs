@@ -1,5 +1,9 @@
-﻿namespace RilaLang.Compiler.Ast
+﻿using System.Linq.Expressions;
+
+namespace RilaLang.Compiler.Ast
 {
+    using DLR = System.Linq.Expressions;
+
     public class FieldAccessExpression : Expression
     {
         public Expression Lhs { get; }
@@ -9,6 +13,11 @@
         {
             Lhs = lhs;
             Rhs = rhs;
+        }
+
+        public override DLR.Expression GenerateExpressionTree(GenScope scope)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
