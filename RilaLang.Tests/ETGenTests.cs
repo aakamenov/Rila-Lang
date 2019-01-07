@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Xunit;
 using Xunit.Sdk;
-using RilaLang.Compiler;
+using RilaLang.Runtime;
 
 namespace RilaLang.Tests
 {
@@ -15,10 +15,12 @@ namespace RilaLang.Tests
         [Fact]
         public void ExecuteBasicOperations()
         {
-            var program = File.ReadAllText("TestPrograms/ETGen/basic.rila");
-            var lexer = new Lexer(program);
-            var module = new RilaParser(lexer).Parse();
-            var et = module.GenerateExpressionTree();
+            var code = File.ReadAllText("TestPrograms/ETGen/basic.rila");
+
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.True(result == 10);
         }
     }
 }

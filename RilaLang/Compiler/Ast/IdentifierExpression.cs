@@ -19,10 +19,12 @@ namespace RilaLang.Compiler.Ast
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
-            var param = DLR.Expression.Parameter(typeof(object), Name);
-            scope.Definitions.Add(Name, param);
-
-            return param;
+            if(scope.TryGetVariable(Name, out DLR.ParameterExpression result))
+            {
+                return result;
+            }
+            
+            throw new InvalidOperationException($"\"{Name}\" is not defined!");
         }
     }
 }

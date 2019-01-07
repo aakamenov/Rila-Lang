@@ -92,11 +92,17 @@
     <Compile Include="Compiler\RilaParser.cs" />
     <Compile Include="Compiler\RilaParserException.cs" />
     <Compile Include="Compiler\Token.cs" />
+    <Compile Include="Hosting\RilaContext.cs" />
+    <Compile Include="Hosting\RilaScriptCode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runtime\Binding\DynamicObjectHelpers.cs" />
     <Compile Include="Runtime\Binding\RilaBinaryOperationBinder.cs" />
     <Compile Include="Runtime\Binding\RuntimeHelpers.cs" />
+    <Compile Include="Runtime\Binding\Utils\TypeModel.cs" />
+    <Compile Include="Runtime\Binding\Utils\TypeModelMetaObject.cs" />
     <Compile Include="Runtime\Rila.cs" />
+    <Compile Include="Runtime\RilaTable.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

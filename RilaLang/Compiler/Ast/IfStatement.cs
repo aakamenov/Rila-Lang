@@ -42,7 +42,7 @@ namespace RilaLang.Compiler.Ast
             for(int i = 0; i < count; i++)
             {
                 var branch = Branches.ElementAt(i);
-                var condition = branch.Condition.GenerateExpressionTree(scope);
+                var condition = DLR.Expression.Convert(branch.Condition.GenerateExpressionTree(scope), typeof(bool));
                 var block = branch.Block.GenerateExpressionTree(scope);
 
                 stmts[i] = DLR.Expression.IfThen(condition, block);
@@ -51,10 +51,10 @@ namespace RilaLang.Compiler.Ast
             if (hasElse)
             {
                 var last = Branches.ElementAt(count);
-                var condition = last.Condition.GenerateExpressionTree(scope);
+                var condition = DLR.Expression.Convert(last.Condition.GenerateExpressionTree(scope), typeof(bool));
                 var block = last.Block.GenerateExpressionTree(scope);
                 var elseBlock = ElseBranch.GenerateExpressionTree(scope);
-
+                
                 stmts[count] = DLR.Expression.IfThenElse(condition, block, elseBlock);
             }
 

@@ -4,9 +4,7 @@ using System.Linq;
 using System.Text;
 using RilaLang.Compiler.Ast;
 using RilaLang.Compiler.Parselets;
-using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("RilaLang.Tests")]
 namespace RilaLang.Compiler
 {
     public partial class RilaParser

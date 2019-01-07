@@ -23,12 +23,12 @@ namespace RilaLang.Compiler.Ast
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
-            var loop = GenScope.CreateLoop(scope);
-            
-            var condition = Condition.GenerateExpressionTree(scope);
+            var loop = scope.CreateLoop();
+
+            var condition = Utils.Convert(Condition.GenerateExpressionTree(scope), typeof(bool));
             var block = Block.GenerateExpressionTree(loop);
-            
-            return Utils.While(condition, block, DLR.Expression.Empty(), scope.BreakTarget, scope.ContinueTarget);
+
+            return Utils.While(condition, block, DLR.Expression.Empty(), loop.BreakTarget, loop.ContinueTarget);
         }
     }
 }

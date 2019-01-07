@@ -21,9 +21,15 @@ namespace RilaLang.Compiler.Ast
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
-            var variable = DLR.Expression.Parameter(typeof(object), Identifier);
+            var rhs = Rhs.GenerateExpressionTree(scope);
 
-            return DLR.Expression.Block(new DLR.ParameterExpression[] { variable }, Rhs.GenerateExpressionTree(scope));
+            if(!scope.TryGetVariable(Identifier, out DLR.ParameterExpression variable))
+            {
+                variable = DLR.Expression.Variable(rhs.Type, Identifier);
+                scope.Definitions[Identifier] = variable;
+            }
+
+            return DLR.Expression.Assign(variable, rhs);
         }
     }
 }

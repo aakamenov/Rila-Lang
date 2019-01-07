@@ -18,7 +18,7 @@
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
-            return DLR.Expression.Constant(Value, typeof(int));
+            return DLR.Expression.Constant(Value, typeof(object));
         }
     }
 
@@ -28,7 +28,7 @@
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
-            return DLR.Expression.Constant(Value, typeof(string));
+            return DLR.Expression.Constant(Value, typeof(object));
         }
     }
 
@@ -38,7 +38,7 @@
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
-            return DLR.Expression.Constant(Value, typeof(bool));
+            return DLR.Expression.Constant(Value, typeof(object));
         }
     }
 }

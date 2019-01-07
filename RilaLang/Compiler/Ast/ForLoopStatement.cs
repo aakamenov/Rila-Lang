@@ -24,7 +24,7 @@ namespace RilaLang.Compiler.Ast
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope) //TODO: See IronPython 3 implementation
         {
-            var loop = GenScope.CreateLoop(scope);
+            var loop = scope.CreateLoop();
             var bindVar = DLR.Expression.Parameter(typeof(object), VariableName);
             var inExpr = DLR.Expression.Dynamic(null, typeof(object));
             var block = Block.GenerateExpressionTree(loop);

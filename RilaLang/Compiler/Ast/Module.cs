@@ -2,12 +2,13 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using RilaLang.Runtime;
 
 namespace RilaLang.Compiler.Ast
 {
     using DLR = System.Linq.Expressions;
 
-    public class Module : AstNode
+    public class Module
     {
         public IReadOnlyCollection<AstNode> Statements { get; }
         public string Name { get; }
@@ -18,16 +19,21 @@ namespace RilaLang.Compiler.Ast
             Name = string.IsNullOrEmpty(name) ? Guid.NewGuid().ToString() : name;
         }
 
-        public override DLR.Expression GenerateExpressionTree(GenScope scope = null)
+        public DLR.Expression<Func<dynamic>> ConstructProgram(Rila runtime)
         {
-            scope = GenScope.CreateRoot();
+            var scope = GenScope.CreateRoot(runtime);
 
             var stmts = new DLR.Expression[Statements.Count];
 
             for (int i = 0; i < Statements.Count; i++)
                 stmts[i] = Statements.ElementAt(i).GenerateExpressionTree(scope);
 
-            return DLR.Expression.Block(stmts);
+            //Set the variables defined at the top level
+            var globals = scope.Definitions.Select(x => x.Value);
+
+            var block = DLR.Expression.Block(globals, stmts);
+
+            return DLR.Expression.Lambda<Func<dynamic>>(block);
         }
     }
 }

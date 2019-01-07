@@ -1,7 +1,5 @@
 ﻿using System.Text;
-using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("RilaLang.Tests")]
 namespace RilaLang.Compiler
 {
     public class Lexer

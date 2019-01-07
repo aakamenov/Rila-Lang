@@ -53,7 +53,8 @@ namespace RilaLang.Compiler.Ast
             var rhs = Rhs.GenerateExpressionTree(scope);
             var op = GetOperation();
             //TODO: TokenType.Range
-            return DLR.Expression.Dynamic(new RilaBinaryOperationBinder(op), typeof(object), lhs, rhs);
+            
+            return DLR.Expression.Dynamic(scope.Runtime.GetBinaryOperationBinder(op), typeof(object), lhs, rhs);
         }
 
         private ExpressionType GetOperation()
