@@ -60,6 +60,11 @@ namespace RilaLang.Compiler
             };
         }
 
+        public GenScope CreateChild()
+        {
+            return new GenScope(Runtime, this);
+        }
+
         public bool IsInLoop()
         {
             if (IsLoop)
