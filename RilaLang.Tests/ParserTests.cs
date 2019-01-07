@@ -14,6 +14,35 @@ namespace RilaLang.Tests
     public class ParserTests
     {
         [Fact]
+        public void ParseFunctionDefinition()
+        {
+            var program = File.ReadAllText("TestPrograms/Parser/function.rila");
+            var lexer = new Lexer(program);
+            var parser = new RilaParser(lexer);
+
+            var ast = parser.Parse();
+
+            Assert.True(ast.Statements.Count == 3);
+
+            var noArgsFun = ast.Statements.First() as FunctionDefinition;
+            Assert.True(noArgsFun.Name == "noArgs");
+            Assert.True(noArgsFun.Arguments.Count == 0);
+            Assert.True(noArgsFun.Body.Statements.Count == 1);
+
+            var oneArgFun = ast.Statements.ElementAt(1) as FunctionDefinition;
+            Assert.True(oneArgFun.Name == "oneArg");
+            Assert.True(oneArgFun.Arguments.Count == 1);
+            Assert.True(oneArgFun.Body.Statements.Count == 1);
+            Assert.IsType<ReturnStatement>(oneArgFun.Body.Statements.First());
+
+            var multiArgsFun = ast.Statements.ElementAt(2) as FunctionDefinition;
+            Assert.True(multiArgsFun.Name == "multiArgs");
+            Assert.True(multiArgsFun.Arguments.Count == 3);
+            Assert.True(multiArgsFun.Body.Statements.Count == 1);
+            Assert.IsType<IfStatement>(multiArgsFun.Body.Statements.First());
+        }
+
+        [Fact]
         public void ParseWhileLoop()
         {
             var program = File.ReadAllText("TestPrograms/Parser/while.rila");

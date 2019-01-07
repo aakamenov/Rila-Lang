@@ -62,12 +62,14 @@
     <Compile Include="Compiler\Ast\Expression.cs" />
     <Compile Include="Compiler\Ast\FieldAccessExpression.cs" />
     <Compile Include="Compiler\Ast\ForLoopStatement.cs" />
+    <Compile Include="Compiler\Ast\FunctionDefinition.cs" />
     <Compile Include="Compiler\Ast\IdentifierExpression.cs" />
     <Compile Include="Compiler\Ast\IfStatement.cs" />
     <Compile Include="Compiler\Ast\IndexerExpression.cs" />
     <Compile Include="Compiler\Ast\Module.cs" />
     <Compile Include="Compiler\Ast\PostfixOperatorExpression.cs" />
     <Compile Include="Compiler\Ast\PrefixOperatorExpression.cs" />
+    <Compile Include="Compiler\Ast\ReturnStatement.cs" />
     <Compile Include="Compiler\Ast\Statement.cs" />
     <Compile Include="Compiler\Ast\ValueExpression.cs" />
     <Compile Include="Compiler\Ast\WhileLoopStatement.cs" />

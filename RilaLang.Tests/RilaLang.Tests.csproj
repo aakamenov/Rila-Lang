@@ -91,6 +91,9 @@
     <None Include="TestPrograms\Parser\function-call.rila">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="TestPrograms\Parser\function.rila">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="TestPrograms\Parser\if.rila">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

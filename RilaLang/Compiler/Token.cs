@@ -42,11 +42,8 @@ namespace RilaLang.Compiler
 
         public static bool TryGetKeyword(string word, out TokenType tokenType)
         {
-            if(keywords.ContainsKey(word))
-            {
-                tokenType = keywords[word];
+            if(keywords.TryGetValue(word, out tokenType))
                 return true;
-            }
 
             tokenType = default(TokenType);
             return false;

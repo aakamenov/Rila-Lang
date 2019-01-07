@@ -86,6 +86,12 @@ namespace RilaLang.Compiler
                 case TokenType.Break:
                     node = ParseBreakStatement();
                     break;
+                case TokenType.Function:
+                    node = ParseFunctionDefinition();
+                    break;
+                case TokenType.Return:
+                    node = ParseReturnStatement();
+                    break;
                 default:
                     expression:
                     node = ParseExpression();
@@ -164,7 +170,6 @@ namespace RilaLang.Compiler
                 foreach(var type in types)
                     AppendError($"Expecting '{type.ToString()}', found {token.Content}", token);
 
-                MoveToNextLine();
                 match = null;
                 return false;
             }
@@ -218,6 +223,51 @@ namespace RilaLang.Compiler
             return new IfStatement(branches, @else);
         }
 
+        private FunctionDefinition ParseFunctionDefinition()
+        {
+            Consume(); // fun
+
+            Expect(out Token name, TokenType.Identifier);
+            Expect(out Token _, TokenType.LParen);
+
+            var args = new List<Expression>();
+
+            if (Peek().TokenType != TokenType.RParen)
+            {
+                do
+                {
+                    var next = Peek();
+                    if(next.TokenType != TokenType.Identifier)
+                    {
+                        Consume();
+                        AppendError($"Expecting argument name, got: {next.Content}", next);
+
+                        continue;
+                    }
+
+                    args.Add(ParseExpression());
+
+                    if (Peek().TokenType == TokenType.RParen || (!Expect(out Token _, TokenType.Comma)))
+                        break;
+                }
+                while (true);
+            }
+
+            Expect(out Token _, TokenType.RParen);
+
+            return new FunctionDefinition(name?.Content, args, ParseBlock());
+        }
+
+        private ReturnStatement ParseReturnStatement()
+        {
+            Consume(); // return
+
+            var expression = ParseExpression();
+            ExpectNewLine();
+
+            return new ReturnStatement(expression);
+        }
+
         private BlockExpression ParseBlock()
         {
             if (!PrepareForBlock())
@@ -231,7 +281,7 @@ namespace RilaLang.Compiler
                 statements.Add(ParseStatement());
                 var next = Peek();
 
-                CheckIndentation(next);
+                currentIndentationLevel = next.IndentationLevel;
             }
 
             return new BlockExpression(statements);
@@ -241,16 +291,13 @@ namespace RilaLang.Compiler
         {
             Consume(); // for
 
-            if (!Expect(out Token identifier, TokenType.Identifier))
-                return null;
-
-            if (!Expect(out Token @in, TokenType.In))
-                return null;
+            Expect(out Token identifier, TokenType.Identifier);
+            Expect(out Token _, TokenType.In);
 
             var inExpression = ParseExpression();
             var block = ParseBlock();
 
-            return new ForLoopStatement(identifier.Content, inExpression, block);
+            return new ForLoopStatement(identifier?.Content, inExpression, block);
         }
 
         private WhileLoopStatement ParseWhileLoop()
@@ -354,11 +401,6 @@ namespace RilaLang.Compiler
         private bool PrepareForBlock()
         {
             return ExpectNewLine() && ExpectIndentation();
-        }
-
-        private void CheckIndentation(Token token)
-        {
-            currentIndentationLevel = token.IndentationLevel;
         }
 
         private void ConsumeNewLines()
