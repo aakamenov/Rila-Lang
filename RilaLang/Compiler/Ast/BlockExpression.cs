@@ -25,7 +25,7 @@ namespace RilaLang.Compiler.Ast
             var blockScope = scope.CreateChild();
 
             for (int i = 0; i < Statements.Count; i++)
-                stmts[i] = (Statements.ElementAt(i).GenerateExpressionTree(blockScope));
+                stmts[i] = Statements.ElementAt(i).GenerateExpressionTree(blockScope);
 
             return DLR.Expression.Block(blockScope.Definitions.Select(x => x.Value), stmts);
         }

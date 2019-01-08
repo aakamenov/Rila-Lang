@@ -16,30 +16,25 @@ namespace RilaLang.Compiler
         public bool IsLoop { get; private set; }
         public bool IsLambda { get; private set; }
 
+        public GenScopeRoot Root { get; protected set; }
         public GenScope Parent { get; private set; }
-        public DLR.LabelTarget BreakTarget { get; private set; }
-        public DLR.LabelTarget ContinueTarget { get; private set; }
+        public DLR.LabelTarget BreakTarget { get; protected set; }
+        public DLR.LabelTarget ContinueTarget { get; protected set; }
 
         public Dictionary<string, DLR.ParameterExpression> Definitions { get; }
 
         private GenScope(Rila runtime, GenScope parent) : this(runtime)
         {
             Parent = parent;
+            Root = parent.Root;
         }
 
-        private GenScope(Rila runtime)
+        protected GenScope(Rila runtime)
         {
             Runtime = runtime;
             Definitions = new Dictionary<string, DLR.ParameterExpression>();
-        }
-
-        public static GenScope CreateRoot(Rila runtime)
-        {
-            return new GenScope(runtime)
-            {
-                BreakTarget = DLR.Expression.Label(),
-                ContinueTarget = DLR.Expression.Label()
-            };
+            BreakTarget = DLR.Expression.Label("@break");
+            ContinueTarget = DLR.Expression.Label("@continue");
         }
 
         public GenScope CreateLoop()
@@ -47,8 +42,6 @@ namespace RilaLang.Compiler
             return new GenScope(Runtime, this)
             {
                 IsLoop = true,
-                BreakTarget = DLR.Expression.Label(),
-                ContinueTarget = DLR.Expression.Label()
             };
         }
 
@@ -98,21 +91,31 @@ namespace RilaLang.Compiler
             return Parent.IsInLambda();
         }
 
+        public IEnumerable<DLR.ParameterExpression> GetAllVariables()
+        {
+            return Definitions.Select(x => x.Value);
+        }
+
         public bool TryGetVariable(string identifier, out DLR.ParameterExpression variable)
         {
-            if (Definitions.TryGetValue(identifier, out DLR.ParameterExpression result))
-            {
-                variable = result;
+            if (Definitions.TryGetValue(identifier, out variable))
                 return true;
-            }
 
-            if (Parent is null)
-            {
-                variable = null;
-                return false;
-            }
+            if (Parent != null)
+                return Parent.TryGetVariable(identifier, out variable);
 
-            return Parent.TryGetVariable(identifier, out variable);
+            return false;
+        }
+    }
+
+    public class GenScopeRoot : GenScope
+    {
+        public Dictionary<string, DLR.LambdaExpression> FunctionDefinitions { get; }
+
+        public GenScopeRoot(Rila runtime) : base(runtime)
+        {
+            FunctionDefinitions = new Dictionary<string, DLR.LambdaExpression>();
+            Root = this;
         }
     }
 }

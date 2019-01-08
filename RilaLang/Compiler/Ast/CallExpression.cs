@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 
@@ -19,7 +21,21 @@ namespace RilaLang.Compiler.Ast
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
-            throw new System.NotImplementedException();
+            var identifier = (IdentifierExpression)Function;
+
+            //TODO: Instead of throwing here, should introduce some sort of a binder
+            //in a dynamic expression to look for the definition in the loaded assemblies
+            if (!scope.Root.FunctionDefinitions.ContainsKey(identifier.Name))
+                throw new InvalidOperationException($"Trying to call \"{identifier.Name}\" which is not defined!");
+
+            var args = new DLR.Expression[Arguments.Count];
+
+            for(var i = 0; i < Arguments.Count; i++)
+            {
+                args[i] = Arguments.ElementAt(i).GenerateExpressionTree(scope);
+            }
+
+            return DLR.Expression.Invoke(scope.Root.FunctionDefinitions[identifier.Name], args);
         }
     }
 }

@@ -19,7 +19,10 @@ namespace RilaLang.Compiler.Ast
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
-            throw new NotImplementedException();
+            if(Expression is null)
+                return DLR.Expression.Goto(scope.BreakTarget);
+
+            return DLR.Expression.Goto(scope.BreakTarget, Expression.GenerateExpressionTree(scope), typeof(object));
         }
     }
 }

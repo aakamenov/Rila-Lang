@@ -21,7 +21,7 @@ namespace RilaLang.Compiler.Ast
 
         public DLR.Expression<Func<dynamic>> ConstructProgram(Rila runtime)
         {
-            var scope = GenScope.CreateRoot(runtime);
+            var scope = new GenScopeRoot(runtime);
 
             var stmts = new DLR.Expression[Statements.Count];
 

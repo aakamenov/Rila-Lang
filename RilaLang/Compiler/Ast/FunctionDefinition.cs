@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection.Emit;
+using Microsoft.Scripting;
 
 namespace RilaLang.Compiler.Ast
 {
@@ -12,19 +14,42 @@ namespace RilaLang.Compiler.Ast
     public class FunctionDefinition : Statement
     {
         public string Name { get; }
-        public IReadOnlyCollection<Expression> Arguments { get; }
+        public IReadOnlyCollection<IdentifierExpression> Parameters { get; }
         public BlockExpression Body { get; }
 
-        public FunctionDefinition(string name, IList<Expression> arguments, BlockExpression body)
+        public FunctionDefinition(string name, IList<IdentifierExpression> parameters, BlockExpression body)
         {
             Name = name;
-            Arguments = new ReadOnlyCollection<Expression>(arguments);
+            Parameters = new ReadOnlyCollection<IdentifierExpression>(parameters);
             Body = body;
         }
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
-            throw new NotImplementedException();
+            if (scope.IsInLoop() || scope.IsInLambda())
+                throw new InvalidOperationException("Cannot declare a function inside the body of another function or inside a loop!");
+
+            if(scope.Root.FunctionDefinitions.ContainsKey(Name))
+                throw new InvalidOperationException($"Function \"{Name}\" is already defined!");
+
+            var functionScope = scope.CreateLambda();
+            var parameters = new DLR.ParameterExpression[Parameters.Count];
+
+            for(var i = 0; i < Parameters.Count; i++)
+            {
+                var name = Parameters.ElementAt(i).Name;
+                var param = DLR.Expression.Parameter(typeof(object), name);
+
+                parameters[i] = param;
+                functionScope.Definitions[name] = param;
+            }
+
+            var body = Body.GenerateExpressionTree(functionScope);
+
+            var function = DLR.Expression.Lambda(body, parameters);
+            scope.Root.FunctionDefinitions[Name] = function;
+
+            return function; //TODO: Since we store the lambda object at the root, this doesn't make sense now...
         }
     }
 }

@@ -34,5 +34,16 @@ namespace RilaLang.Tests
             Func<dynamic> wrapper = () => engine.Execute(code);
             Assert.Throws<SyntaxErrorException>(wrapper);
         }
+
+        [Fact]
+        public void BasicFunction()
+        {
+            var code = File.ReadAllText("TestPrograms/ETGen/basic_function.rila");
+
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            var a = 1;
+        }
     }
 }

@@ -76,6 +76,9 @@
     <None Include="TestPrograms\ETGen\basic.rila">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="TestPrograms\ETGen\basic_function.rila">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="TestPrograms\Lexer\fib.rila">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

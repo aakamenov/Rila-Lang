@@ -230,7 +230,7 @@ namespace RilaLang.Compiler
             Expect(out Token name, TokenType.Identifier);
             Expect(out Token _, TokenType.LParen);
 
-            var args = new List<Expression>();
+            var args = new List<IdentifierExpression>();
 
             if (Peek().TokenType != TokenType.RParen)
             {
@@ -245,7 +245,7 @@ namespace RilaLang.Compiler
                         continue;
                     }
 
-                    args.Add(ParseExpression());
+                    args.Add(ParseExpression() as IdentifierExpression);
 
                     if (Peek().TokenType == TokenType.RParen || (!Expect(out Token _, TokenType.Comma)))
                         break;
@@ -262,7 +262,11 @@ namespace RilaLang.Compiler
         {
             Consume(); // return
 
-            var expression = ParseExpression();
+            Expression expression = null;
+
+            if (Peek().TokenType != TokenType.NewLine) // void return
+                expression = ParseExpression();
+
             ExpectNewLine();
 
             return new ReturnStatement(expression);
