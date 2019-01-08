@@ -18,10 +18,18 @@ namespace RilaLang.Compiler
 
         public GenScopeRoot Root { get; protected set; }
         public GenScope Parent { get; private set; }
+
         public DLR.LabelTarget BreakTarget { get; protected set; }
         public DLR.LabelTarget ContinueTarget { get; protected set; }
 
         public Dictionary<string, DLR.ParameterExpression> Definitions { get; }
+
+        public static DLR.LabelTarget ReturnTarget;
+
+        static GenScope()
+        {
+            ReturnTarget = CreateReturnTarget();
+        }
 
         private GenScope(Rila runtime, GenScope parent) : this(runtime)
         {
@@ -37,11 +45,21 @@ namespace RilaLang.Compiler
             ContinueTarget = DLR.Expression.Label("@continue");
         }
 
+        public static DLR.LabelTarget CreateReturnTarget(bool isVoid = true)
+        {
+            if (isVoid)
+                ReturnTarget = DLR.Expression.Label("@return");
+            else
+                ReturnTarget = DLR.Expression.Label(typeof(object), "@return");
+
+            return ReturnTarget;
+        }
+
         public GenScope CreateLoop()
         {
             return new GenScope(Runtime, this)
             {
-                IsLoop = true,
+                IsLoop = true
             };
         }
 

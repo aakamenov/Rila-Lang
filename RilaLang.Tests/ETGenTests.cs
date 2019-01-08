@@ -43,7 +43,7 @@ namespace RilaLang.Tests
             var engine = Rila.CreateRilaEngine();
             var result = engine.Execute(code);
 
-            var a = 1;
+            Assert.True(result == 10);
         }
     }
 }
