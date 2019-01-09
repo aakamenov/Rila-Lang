@@ -22,6 +22,8 @@ namespace RilaLang.Runtime
         public Scope DlrGlobals { get; }
         public ExpandoObject Globals { get; }
 
+        public RangeOperationBinder RangeOperationBinder { get; }
+        
         private Dictionary<ExpressionType, RilaBinaryOperationBinder> binaryOperationBinders;
         private IList<Assembly> assemblies;
 
@@ -33,6 +35,7 @@ namespace RilaLang.Runtime
             this.assemblies = assemblies;
             binaryOperationBinders = new Dictionary<ExpressionType, RilaBinaryOperationBinder>();
 
+            RangeOperationBinder = new RangeOperationBinder();
             //AddAssemblyNamesAndTypes();
         }
         

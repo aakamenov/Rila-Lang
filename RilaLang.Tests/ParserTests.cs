@@ -71,12 +71,12 @@ namespace RilaLang.Tests
             Assert.IsType<ForLoopStatement>(ifStmt.Branches.First().Block.Statements.First());
             var nestedFor = ifStmt.Branches.First().Block.Statements.First() as ForLoopStatement;
             Assert.True(nestedFor.VariableName == "j");
-            Assert.IsType<BinaryOperatorExpression>(nestedFor.InExpression);
-            var nestedForExpression = nestedFor.InExpression as BinaryOperatorExpression;
-            Assert.IsType<NumberExpression>(nestedForExpression.Lhs);
-            Assert.True((nestedForExpression.Lhs as NumberExpression).Value == 0);
-            Assert.IsType<IdentifierExpression>(nestedForExpression.Rhs);
-            Assert.True((nestedForExpression.Rhs as IdentifierExpression).Name == "i");
+            Assert.IsType<RangeExpression>(nestedFor.InExpression);
+            var nestedForExpression = nestedFor.InExpression as RangeExpression;
+            Assert.IsType<NumberExpression>(nestedForExpression.Start);
+            Assert.True((nestedForExpression.Start as NumberExpression).Value == 0);
+            Assert.IsType<IdentifierExpression>(nestedForExpression.End);
+            Assert.True((nestedForExpression.End as IdentifierExpression).Name == "i");
             Assert.True(nestedFor.Block.Statements.Count == 2);
             Assert.IsType<FieldAccessExpression>(nestedFor.Block.Statements.First());
             Assert.IsType<FieldAccessExpression>(nestedFor.Block.Statements.ElementAt(1));
@@ -101,13 +101,12 @@ namespace RilaLang.Tests
             var forLoop = ast.Statements.First() as ForLoopStatement;
             Assert.True(forLoop.VariableName == "i");
 
-            Assert.IsType<BinaryOperatorExpression>(forLoop.InExpression);
-            var forExpression = forLoop.InExpression as BinaryOperatorExpression;
-            Assert.IsType<NumberExpression>(forExpression.Lhs);
-            Assert.True((forExpression.Lhs as NumberExpression).Value == 0);
-            Assert.IsType<NumberExpression>(forExpression.Rhs);
-            Assert.True((forExpression.Rhs as NumberExpression).Value == 100);
-            Assert.True(forExpression.Operation == TokenType.Range);
+            Assert.IsType<RangeExpression>(forLoop.InExpression);
+            var forExpression = forLoop.InExpression as RangeExpression;
+            Assert.IsType<NumberExpression>(forExpression.Start);
+            Assert.True((forExpression.Start as NumberExpression).Value == 0);
+            Assert.IsType<NumberExpression>(forExpression.End);
+            Assert.True((forExpression.End as NumberExpression).Value == 100);
 
             Assert.True(forLoop.Block.Statements.Count == 1);
             Assert.IsType<IfStatement>(forLoop.Block.Statements.First());
@@ -117,12 +116,12 @@ namespace RilaLang.Tests
             Assert.IsType<ForLoopStatement>(ifStmt.Branches.First().Block.Statements.First());
             var nestedFor = ifStmt.Branches.First().Block.Statements.First() as ForLoopStatement;
             Assert.True(nestedFor.VariableName == "j");
-            Assert.IsType<BinaryOperatorExpression>(nestedFor.InExpression);
-            var nestedForExpression = nestedFor.InExpression as BinaryOperatorExpression;
-            Assert.IsType<NumberExpression>(nestedForExpression.Lhs);
-            Assert.True((nestedForExpression.Lhs as NumberExpression).Value == 0);
-            Assert.IsType<IdentifierExpression>(nestedForExpression.Rhs);
-            Assert.True((nestedForExpression.Rhs as IdentifierExpression).Name == "i");
+            Assert.IsType<RangeExpression>(nestedFor.InExpression);
+            var nestedForExpression = nestedFor.InExpression as RangeExpression;
+            Assert.IsType<NumberExpression>(nestedForExpression.Start);
+            Assert.True((nestedForExpression.Start as NumberExpression).Value == 0);
+            Assert.IsType<IdentifierExpression>(nestedForExpression.End);
+            Assert.True((nestedForExpression.End as IdentifierExpression).Name == "i");
             Assert.True(nestedFor.Block.Statements.Count == 2);
             Assert.IsType<FieldAccessExpression>(nestedFor.Block.Statements.First());
             Assert.IsType<FieldAccessExpression>(nestedFor.Block.Statements.ElementAt(1));

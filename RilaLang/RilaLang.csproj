@@ -69,6 +69,7 @@
     <Compile Include="Compiler\Ast\Module.cs" />
     <Compile Include="Compiler\Ast\PostfixOperatorExpression.cs" />
     <Compile Include="Compiler\Ast\PrefixOperatorExpression.cs" />
+    <Compile Include="Compiler\Ast\RangeExpression.cs" />
     <Compile Include="Compiler\Ast\ReturnStatement.cs" />
     <Compile Include="Compiler\Ast\Statement.cs" />
     <Compile Include="Compiler\Ast\ValueExpression.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Compiler\Parselets\PostfixOperatorParselet.cs" />
     <Compile Include="Compiler\Parselets\Precedence.cs" />
     <Compile Include="Compiler\Parselets\PrefixOperatorParslet.cs" />
+    <Compile Include="Compiler\Parselets\RangeOperatorParselet.cs" />
     <Compile Include="Compiler\Parselets\StringParselet.cs" />
     <Compile Include="Compiler\RilaParser.ExpressionsConfig.cs" />
     <Compile Include="Compiler\RilaParser.cs" />
@@ -99,6 +101,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime\Binding\DynamicObjectHelpers.cs" />
+    <Compile Include="Runtime\Binding\RangeOperationBinder.cs" />
     <Compile Include="Runtime\Binding\RilaBinaryOperationBinder.cs" />
     <Compile Include="Runtime\Binding\RuntimeHelpers.cs" />
     <Compile Include="Runtime\Binding\Utils\TypeModel.cs" />

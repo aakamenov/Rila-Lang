@@ -25,9 +25,9 @@ namespace RilaLang.Runtime.Binding
                                .Merge(arg.Restrictions)
                                .Merge(BindingRestrictions.GetTypeRestriction(target.Expression, target.LimitType))
                                .Merge(BindingRestrictions.GetTypeRestriction(arg.Expression, arg.LimitType));
-
+            
             return new DynamicMetaObject(RuntimeHelpers.EnsureObjectResult(
-                        Expression.MakeBinary(Operation,
+                                         Expression.MakeBinary(Operation,
                                               Expression.Convert(target.Expression, target.LimitType),
                                               Expression.Convert(arg.Expression, arg.LimitType))),restrictions);
         }
