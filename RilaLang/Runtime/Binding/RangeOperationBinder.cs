@@ -44,9 +44,9 @@ namespace RilaLang.Runtime.Binding
 
             if (AcceptedTypes.Contains(target.RuntimeType) && AcceptedTypes.Contains(end.RuntimeType))
             {
-                var startValue = (int)target.Value;
+                var startValue = (int)target.Value; //TODO: This will throw on values larger than int.MaxValue
                 var endValue = (int)end.Value;
-
+                
                 if (startValue < 0 || endValue < 0)
                     errorMessage = "Operator \"..\" doesn't accept negative values!";
                 else if (endValue < startValue)

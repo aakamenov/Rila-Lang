@@ -20,8 +20,9 @@ namespace RilaLang.Tests
         {
             var code = @"
 a = 0
+b = 10
 
-for i in 0..10
+for i in 0..b
     a = i
 
 a
@@ -31,6 +32,27 @@ a
             var result = engine.Execute(code);
 
             Assert.True(result == 10);
+        }
+
+        [Fact]
+        public void ForLoopWithIfs()
+        {
+            var code = @"
+a = 0
+
+for i in 0..10
+    if i % 2 == 0
+        a = a + i
+    else
+        a = a + 1
+
+a
+";
+
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.True(result == 35);
         }
     }
 }
