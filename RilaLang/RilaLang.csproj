@@ -103,6 +103,9 @@
     <Compile Include="Runtime\Binding\DynamicObjectHelpers.cs" />
     <Compile Include="Runtime\Binding\RangeOperationBinder.cs" />
     <Compile Include="Runtime\Binding\RilaBinaryOperationBinder.cs" />
+    <Compile Include="Runtime\Binding\RilaGetMemberBinder.cs" />
+    <Compile Include="Runtime\Binding\RilaInvokeBinder.cs" />
+    <Compile Include="Runtime\Binding\RilaInvokeMemberBinder.cs" />
     <Compile Include="Runtime\Binding\RuntimeHelpers.cs" />
     <Compile Include="Runtime\Binding\Utils\TypeModel.cs" />
     <Compile Include="Runtime\Binding\Utils\TypeModelMetaObject.cs" />

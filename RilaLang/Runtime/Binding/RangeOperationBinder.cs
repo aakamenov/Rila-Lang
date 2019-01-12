@@ -50,7 +50,7 @@ namespace RilaLang.Runtime.Binding
                 if (startValue < 0 || endValue < 0)
                     errorMessage = "Operator \"..\" doesn't accept negative values!";
                 else if (endValue < startValue)
-                    errorMessage = "Right-hand side argument is less the left-hand side argument supplied to operator \"..\"";
+                    errorMessage = "Right-hand side argument is less than the left-hand side argument supplied to operator \"..\"";
 
                 if (string.IsNullOrEmpty(errorMessage))
                 {
