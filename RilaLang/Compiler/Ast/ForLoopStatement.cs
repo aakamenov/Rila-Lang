@@ -57,16 +57,17 @@ namespace RilaLang.Compiler.Ast
                         DLR.Expression.Break(breakLabel)),
                     breakLabel);
 
-            //var tryFinally =
-            //    DLR.Expression.TryFinally(
-            //        loop,
-            //        enumeratorDispose);
+            var tryFinally =
+                DLR.Expression.TryFinally(
+                    loop,
+                    DLR.Expression.IfThen( //Arrays do not implement IDisposable, so we need to check
+                        DLR.Expression.TypeIs(enumeratorVar, typeof(IDisposable)), enumeratorDispose));
 
             var body =
                 DLR.Expression.Block(
                     new[] { enumeratorVar },
                     enumeratorAssign,
-                    loop); //Check if we can call dispose
+                    tryFinally);
 
             return body;
         }
