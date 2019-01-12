@@ -13,14 +13,20 @@ namespace RilaLang.Compiler.Parselets
 
         public Expression Parse(RilaParser parser, Token token, Expression lhs)
         {
-            var expression = parser.ParseExpression();
+            var parameters = new List<Expression>();
 
-            parser.Expect(out Token rSquare, TokenType.RSquare);
+            if (!parser.ConsumeIf(TokenType.RSquare))
+            {
+                do
+                {
+                    parameters.Add(parser.ParseExpression());
+                }
+                while (parser.ConsumeIf(TokenType.Comma));
 
-            if (!(lhs is IdentifierExpression))
-                parser.AppendError("Expecting an identifier", token);
+                parser.Expect(out Token rSquare, TokenType.RSquare);
+            }
 
-            return new IndexerExpression(lhs as IdentifierExpression, expression);
+            return new IndexerExpression(lhs, parameters);
         }
     }
 }

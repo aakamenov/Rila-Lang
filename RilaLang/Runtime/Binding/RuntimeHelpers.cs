@@ -126,7 +126,7 @@ namespace RilaLang.Runtime.Binding
             return restrictions;
         }
 
-        public static Expression[] ConvertArguments(DynamicMetaObject[] args, ParameterInfo[] ps)
+        public static Expression[] ConvertArguments(DynamicMetaObject[] args, ParameterInfo[] parameters)
         {
             Expression[] callArgs = new Expression[args.Length];
 
@@ -134,11 +134,45 @@ namespace RilaLang.Runtime.Binding
             {
                 Expression argExpr = args[i].Expression;
 
-                argExpr = Expression.Convert(argExpr, ps[i].ParameterType);
+                argExpr = Expression.Convert(argExpr, parameters[i].ParameterType);
                 callArgs[i] = argExpr;
             }
 
             return callArgs;
+        }
+
+        public static Expression GetIndexingExpression(DynamicMetaObject target, DynamicMetaObject[] indexes)
+        {
+            var indexExpressions = indexes.Select(x => Expression.Convert(x.Expression, x.LimitType));
+
+            if(target.LimitType.IsArray)
+                return Expression.ArrayAccess(Expression.Convert(target.Expression, target.LimitType), indexExpressions);
+
+            var indexers = target.LimitType.GetProperties().Where(x => x.GetIndexParameters().Length > 0);
+
+            if(indexers.Any())
+            {
+                indexers = indexers.Where(x => x.GetIndexParameters().Length == indexes.Length);
+
+                if(indexers.Any())
+                {
+
+                    var result = new List<PropertyInfo>();
+
+                    foreach (var indexer in indexers)
+                    {
+                        if (ParametersMatchArguments(indexer.GetIndexParameters(), indexes))
+                            result.Add(indexer);
+                    }
+
+                    return Expression.MakeIndex(Expression.Convert(target.Expression, target.LimitType),
+                        result.First(), indexExpressions);
+                }
+            }
+
+            return Expression.Throw(
+                       Expression.New(typeof(MissingMemberException).GetConstructor(new Type[] { typeof(string) }),
+                           Expression.Constant($"Type \"{target.LimitType}\" has no indexer accepting {indexes.Length} arguments!")));
         }
     }
 }

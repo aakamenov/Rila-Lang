@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Dynamic;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RilaLang.Runtime.Binding;
 
 namespace RilaLang.Compiler.Ast
 {
@@ -10,18 +13,22 @@ namespace RilaLang.Compiler.Ast
 
     public class IndexerExpression : Expression
     {
-        public IdentifierExpression Identifier { get; }
-        public Expression Expression { get; }
+        public Expression Identifier { get; }
+        public IReadOnlyCollection<Expression> Parameters { get; }
 
-        public IndexerExpression(IdentifierExpression identifier, Expression expression)
+        public IndexerExpression(Expression identifier, IList<Expression> parameters)
         {
             Identifier = identifier;
-            Expression = expression;
+            Parameters = new ReadOnlyCollection<Expression>(parameters);
         }
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
-            return DLR.Expression.ArrayIndex(Identifier.GenerateExpressionTree(scope), Expression.GenerateExpressionTree(scope));
+            var args = new List<DLR.Expression>();
+            args.Add(Identifier.GenerateExpressionTree(scope));
+            args.AddRange(Parameters.Select(x => x.GenerateExpressionTree(scope)));
+
+            return DLR.Expression.Dynamic(new RilaGetIndexBinder(new CallInfo(Parameters.Count)), typeof(object), args);
         }
     }
 }

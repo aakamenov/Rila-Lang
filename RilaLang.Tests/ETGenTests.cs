@@ -46,6 +46,21 @@ namespace RilaLang.Tests
             var result = engine.Execute(code);
 
             Assert.True(result == 10);
-        }      
+        }
+        
+        [Fact]
+        public void Indexing()
+        {
+            var code = @"
+a = 1..10
+a[5]
+
+";
+
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.True(result == 6);
+        }
     }
 }

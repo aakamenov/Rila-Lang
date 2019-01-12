@@ -181,7 +181,7 @@ namespace RilaLang.Tests
         [Fact]
         public void ParseIndexerExpression()
         {
-            var program = "a = arr[0]\nb = arr[myVar]\nc = a + b + arr[a - b]";
+            var program = "a = arr[0]\nb = arr[myVar, otherParam]\nc = a + b + arr[a - b]";
             var lexer = new Lexer(program);
             var parser = new RilaParser(lexer);
 
@@ -191,14 +191,21 @@ namespace RilaLang.Tests
             var a = ast.Statements.First() as AssignmentStatement;
             Assert.IsType<IndexerExpression>(a.Rhs);
             var aIndexer = a.Rhs as IndexerExpression;
-            Assert.True(aIndexer.Identifier.Name == "arr");
-            Assert.IsType<NumberExpression>(aIndexer.Expression);
+            Assert.IsType<IdentifierExpression>(aIndexer.Identifier);
+            var arr = aIndexer.Identifier as IdentifierExpression;
+            Assert.True(arr.Name == "arr");
+            Assert.True(aIndexer.Parameters.Count == 1);
+            Assert.IsType<NumberExpression>(aIndexer.Parameters.First());
 
             var b = ast.Statements.ElementAt(1) as AssignmentStatement;
             Assert.IsType<IndexerExpression>(b.Rhs);
             var bIndexer = b.Rhs as IndexerExpression;
-            Assert.True(bIndexer.Identifier.Name == "arr");
-            Assert.IsType<IdentifierExpression>(bIndexer.Expression);
+            Assert.IsType<IdentifierExpression>(bIndexer.Identifier);
+            var arrB = bIndexer.Identifier as IdentifierExpression;
+            Assert.True(arrB.Name == "arr");
+            Assert.True(bIndexer.Parameters.Count == 2);
+            Assert.IsType<IdentifierExpression>(bIndexer.Parameters.First());
+            Assert.IsType<IdentifierExpression>(bIndexer.Parameters.ElementAt(1));
 
             var c = ast.Statements.ElementAt(2) as AssignmentStatement;
             Assert.IsType<BinaryOperatorExpression>(c.Rhs);
@@ -206,8 +213,11 @@ namespace RilaLang.Tests
 
             Assert.IsType<IndexerExpression>((c.Rhs as BinaryOperatorExpression).Rhs);
             var cIndexer = (c.Rhs as BinaryOperatorExpression).Rhs as IndexerExpression;
-            Assert.True(cIndexer.Identifier.Name == "arr");
-            Assert.IsType<BinaryOperatorExpression>(cIndexer.Expression);
+            Assert.IsType<IdentifierExpression>(cIndexer.Identifier);
+            var arrC = cIndexer.Identifier as IdentifierExpression;
+            Assert.True(arrC.Name == "arr");
+            Assert.True(cIndexer.Parameters.Count == 1);
+            Assert.IsType<BinaryOperatorExpression>(cIndexer.Parameters.First());
         }
 
         [Fact]
