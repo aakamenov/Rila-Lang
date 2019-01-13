@@ -61,16 +61,6 @@ namespace RilaLang.Compiler
 
             switch (token.TokenType)
             {
-                case TokenType.Identifier:
-                    {
-                        var peek = Peek(1).TokenType;
-
-                        if (peek == TokenType.Assign)
-                            node = ParseAssignment();
-                        else
-                            goto expression;
-                    }
-                    break;
                 case TokenType.If:
                     node = ParseIf();
                     break;
@@ -93,13 +83,23 @@ namespace RilaLang.Compiler
                     node = ParseReturnStatement();
                     break;
                 default:
-                    expression:
-                    node = ParseExpression();
-                    ConsumeNewLines();
+                    node = ParseExpressionOrAssignment();
+                    ExpectNewLine();
                     break;
             }
 
             return node;
+        }
+
+        internal AstNode ParseExpressionOrAssignment()
+        {
+            var left = ParseExpression();
+            var token = Peek();
+
+            if (token.TokenType == TokenType.NewLine || token.TokenType == TokenType.EOF)
+                return left;
+
+            return FinishAssignment(left);
         }
 
         internal Expression ParseExpression(Precedence precedence = Precedence.None)
@@ -122,6 +122,8 @@ namespace RilaLang.Compiler
                 {
                     left = infixParselet.Parse(this, token, left);
                 }
+                else if (IsAssignmentOperator(token.TokenType))
+                    break;
                 else
                     throw new RilaParserException($"Unrecognised token: {token.Content}");
             }
@@ -184,16 +186,12 @@ namespace RilaLang.Compiler
             errorSink.AppendLine($"Error on line {token.Line}:{token.Column} -> {error}");
         }
 
-        private AssignmentStatement ParseAssignment()
+        private AssignmentStatement FinishAssignment(Expression left)
         {
-            var identifier = Consume().Content;
-            Consume(); // =
+            var operation = Consume().TokenType;
+            var right = ParseExpression();
 
-            var expression = ParseExpression();
-
-            ExpectNewLine();
-
-            return new AssignmentStatement(identifier, expression);
+            return new AssignmentStatement(left, operation, right);
         }
 
         private IfStatement ParseIf()
@@ -338,6 +336,12 @@ namespace RilaLang.Compiler
             }
 
             return Precedence.None;
+        }
+
+        private bool IsAssignmentOperator(TokenType type)
+        {
+            //Put other syntactic sugar operators
+            return type == TokenType.Assign;
         }
 
         private void ReportNewLineError(Token token)

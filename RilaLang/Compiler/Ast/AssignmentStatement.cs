@@ -10,26 +10,45 @@ namespace RilaLang.Compiler.Ast
 
     public class AssignmentStatement : Statement
     {
-        public string Identifier { get; private set; }
-        public Expression Rhs { get; private set; }
+        public Expression Target { get; }
+        public TokenType Operation { get; }
+        public Expression Expression { get; }
 
-        public AssignmentStatement(string identifier, Expression expression)
+        public AssignmentStatement(Expression target, TokenType operation, Expression expression)
         {
-            Identifier = identifier;
-            Rhs = expression;
+            Target = target;
+            Operation = operation;
+            Expression = expression;
         }
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
-            var rhs = Rhs.GenerateExpressionTree(scope);
+            var expression = Expression.GenerateExpressionTree(scope);
 
-            if(!scope.TryGetVariable(Identifier, out DLR.ParameterExpression variable))
+            var identifier = Target as IdentifierExpression;
+
+            if (identifier != null) //Check if a new variable is introduced
             {
-                variable = DLR.Expression.Variable(rhs.Type, Identifier);
-                scope.Definitions[Identifier] = variable;
+                var name = identifier.Name;
+
+                if (!scope.TryGetVariable(name, out DLR.ParameterExpression variable)) //If it is, initialise it
+                {
+                    variable = DLR.Expression.Variable(typeof(object), name);
+                    scope.Definitions[name] = variable;
+                }
+
+                return DLR.Expression.Assign(variable, expression);
             }
 
-            return DLR.Expression.Assign(variable, rhs);
+            var target = Target.GenerateExpressionTree(scope);
+            
+            switch(Operation)
+            {
+                case TokenType.Assign:
+                    return DLR.Expression.Assign(target, expression);
+                default:
+                    throw new NotImplementedException(); // Add syntactic sugar operators
+            }
         }
     }
 }

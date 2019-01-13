@@ -158,10 +158,12 @@ namespace RilaLang.Tests
 
             Assert.IsType<AssignmentStatement>(ast.Statements.ElementAt(1));
             var assign = ast.Statements.ElementAt(1) as AssignmentStatement;
-            Assert.True(assign.Identifier == "myVar");
+            Assert.IsType<IdentifierExpression>(assign.Target);
+            var assignTarget = assign.Target as IdentifierExpression;
+            Assert.True(assignTarget.Name == "myVar");
 
-            Assert.IsType<FieldAccessExpression>(assign.Rhs);
-            var assignFieldAccess = assign.Rhs as FieldAccessExpression;
+            Assert.IsType<FieldAccessExpression>(assign.Expression);
+            var assignFieldAccess = assign.Expression as FieldAccessExpression;
             Assert.IsType<IdentifierExpression>(assignFieldAccess.Lhs);
 
             Assert.IsType<FieldAccessExpression>(assignFieldAccess.Rhs);
@@ -189,8 +191,8 @@ namespace RilaLang.Tests
             Assert.True(ast.Statements.Count(x => x is AssignmentStatement) == 3);
 
             var a = ast.Statements.First() as AssignmentStatement;
-            Assert.IsType<IndexerExpression>(a.Rhs);
-            var aIndexer = a.Rhs as IndexerExpression;
+            Assert.IsType<IndexerExpression>(a.Expression);
+            var aIndexer = a.Expression as IndexerExpression;
             Assert.IsType<IdentifierExpression>(aIndexer.Identifier);
             var arr = aIndexer.Identifier as IdentifierExpression;
             Assert.True(arr.Name == "arr");
@@ -198,8 +200,8 @@ namespace RilaLang.Tests
             Assert.IsType<NumberExpression>(aIndexer.Parameters.First());
 
             var b = ast.Statements.ElementAt(1) as AssignmentStatement;
-            Assert.IsType<IndexerExpression>(b.Rhs);
-            var bIndexer = b.Rhs as IndexerExpression;
+            Assert.IsType<IndexerExpression>(b.Expression);
+            var bIndexer = b.Expression as IndexerExpression;
             Assert.IsType<IdentifierExpression>(bIndexer.Identifier);
             var arrB = bIndexer.Identifier as IdentifierExpression;
             Assert.True(arrB.Name == "arr");
@@ -208,11 +210,11 @@ namespace RilaLang.Tests
             Assert.IsType<IdentifierExpression>(bIndexer.Parameters.ElementAt(1));
 
             var c = ast.Statements.ElementAt(2) as AssignmentStatement;
-            Assert.IsType<BinaryOperatorExpression>(c.Rhs);
-            Assert.IsType<BinaryOperatorExpression>((c.Rhs as BinaryOperatorExpression).Lhs);
+            Assert.IsType<BinaryOperatorExpression>(c.Expression);
+            Assert.IsType<BinaryOperatorExpression>((c.Expression as BinaryOperatorExpression).Lhs);
 
-            Assert.IsType<IndexerExpression>((c.Rhs as BinaryOperatorExpression).Rhs);
-            var cIndexer = (c.Rhs as BinaryOperatorExpression).Rhs as IndexerExpression;
+            Assert.IsType<IndexerExpression>((c.Expression as BinaryOperatorExpression).Rhs);
+            var cIndexer = (c.Expression as BinaryOperatorExpression).Rhs as IndexerExpression;
             Assert.IsType<IdentifierExpression>(cIndexer.Identifier);
             var arrC = cIndexer.Identifier as IdentifierExpression;
             Assert.True(arrC.Name == "arr");
@@ -233,8 +235,8 @@ namespace RilaLang.Tests
             Assert.IsType<AssignmentStatement>(ast.Statements.First());
             var assign = ast.Statements.First() as AssignmentStatement;
 
-            Assert.IsType<CallExpression>(assign.Rhs);
-            var call = assign.Rhs as CallExpression;
+            Assert.IsType<CallExpression>(assign.Expression);
+            var call = assign.Expression as CallExpression;
             Assert.IsType<IdentifierExpression>(call.Function);
             Assert.True((call.Function as IdentifierExpression).Name == "myFun");
             Assert.True(call.Arguments.Count == 4);
@@ -277,10 +279,12 @@ namespace RilaLang.Tests
 
             Assert.IsType<AssignmentStatement>(first);
             var assign = first as AssignmentStatement;
-            Assert.True(assign.Identifier == "a");
+            Assert.IsType<IdentifierExpression>(assign.Target);
+            var assignTarget = assign.Target as IdentifierExpression;
+            Assert.True(assignTarget.Name == "a");
 
-            Assert.IsType<BinaryOperatorExpression>(assign.Rhs);
-            var plus = assign.Rhs as BinaryOperatorExpression;
+            Assert.IsType<BinaryOperatorExpression>(assign.Expression);
+            var plus = assign.Expression as BinaryOperatorExpression;
             Assert.True(plus.Operation == TokenType.Plus);
 
             Assert.IsType<IdentifierExpression>(plus.Lhs);

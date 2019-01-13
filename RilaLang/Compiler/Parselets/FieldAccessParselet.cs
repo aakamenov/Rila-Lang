@@ -26,11 +26,12 @@ namespace RilaLang.Compiler.Parselets
             return new FieldAccessExpression(lhs, rhs);
         }
 
-        private bool CheckType(Expression expression)
+        private bool CheckType(Expression expression) //TODO: maybe remove this?
         {
             if (expression is CallExpression ||
                 expression is IdentifierExpression ||
                 expression is FieldAccessExpression ||
+                expression is IndexerExpression ||
                 expression.GetType().IsAssignableFrom(typeof(ValueExpression<>)))
             {
                 return true;

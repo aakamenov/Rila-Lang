@@ -18,14 +18,10 @@ namespace RilaLang.Runtime.Binding
         public override DynamicMetaObject FallbackGetIndex(DynamicMetaObject target, DynamicMetaObject[] indexes, DynamicMetaObject errorSuggestion)
         {
             if (ComBinder.TryBindGetIndex(this, target, indexes, out DynamicMetaObject result))
-            {
                 return result;
-            }
 
             if(!target.HasValue || indexes.Any(x => !x.HasValue))
-            {
                 return Defer(target, indexes);
-            }
 
             var expression = RuntimeHelpers.EnsureObjectResult(RuntimeHelpers.GetIndexingExpression(target,indexes));
             var restrictions = RuntimeHelpers.GetTargetArgsRestrictions(target, indexes, false);
