@@ -41,7 +41,7 @@ namespace RilaLang.Tests
             Assert.True(multiArgsFun.Body.Statements.Count == 1);
             Assert.IsType<IfStatement>(multiArgsFun.Body.Statements.First());
         }
-        /*
+
         [Fact]
         public void ParseWhileLoop()
         {
@@ -78,8 +78,8 @@ namespace RilaLang.Tests
             Assert.IsType<IdentifierExpression>(nestedForExpression.End);
             Assert.True((nestedForExpression.End as IdentifierExpression).Name == "i");
             Assert.True(nestedFor.Block.Statements.Count == 2);
-            Assert.IsType<FieldAccessExpression>(nestedFor.Block.Statements.First());
-            Assert.IsType<FieldAccessExpression>(nestedFor.Block.Statements.ElementAt(1));
+            Assert.IsType<DotExpression>(nestedFor.Block.Statements.First());
+            Assert.IsType<DotExpression>(nestedFor.Block.Statements.ElementAt(1));
 
             Assert.True(ifStmt.ElseBranch.Statements.Count == 1);
             Assert.IsType<ContinueStatement>(ifStmt.ElseBranch.Statements.First());
@@ -123,8 +123,8 @@ namespace RilaLang.Tests
             Assert.IsType<IdentifierExpression>(nestedForExpression.End);
             Assert.True((nestedForExpression.End as IdentifierExpression).Name == "i");
             Assert.True(nestedFor.Block.Statements.Count == 2);
-            Assert.IsType<FieldAccessExpression>(nestedFor.Block.Statements.First());
-            Assert.IsType<FieldAccessExpression>(nestedFor.Block.Statements.ElementAt(1));
+            Assert.IsType<DotExpression>(nestedFor.Block.Statements.First());
+            Assert.IsType<DotExpression>(nestedFor.Block.Statements.ElementAt(1));
 
             Assert.True(ifStmt.ElseBranch.Statements.Count == 1);
             Assert.IsType<ContinueStatement>(ifStmt.ElseBranch.Statements.First());
@@ -147,39 +147,27 @@ namespace RilaLang.Tests
             var first = ast.Statements.First() as CallExpression;
             Assert.IsType<IdentifierExpression>(first.Function);
             Assert.True(first.Arguments.Count == 1);
-            Assert.IsType<FieldAccessExpression>(first.Arguments.First());
-            var arg = first.Arguments.First() as FieldAccessExpression;
-            Assert.IsType<IdentifierExpression>(arg.Lhs);
-
-            Assert.IsType<FieldAccessExpression>(arg.Rhs);
-            var inner = arg.Rhs as FieldAccessExpression;
-            Assert.IsType<CallExpression>(inner.Lhs);
-            Assert.IsType<IdentifierExpression>(inner.Rhs);
-
+            Assert.IsType<DotExpression>(first.Arguments.First());
+            var arg = first.Arguments.First() as DotExpression;
+            Assert.IsType<IdentifierExpression>(arg.Expressions.First());         
+            Assert.IsType<CallExpression>(arg.Expressions.ElementAt(1));
+            Assert.IsType<IdentifierExpression>(arg.Expressions.ElementAt(2));
+            
             Assert.IsType<AssignmentStatement>(ast.Statements.ElementAt(1));
             var assign = ast.Statements.ElementAt(1) as AssignmentStatement;
             Assert.IsType<IdentifierExpression>(assign.Target);
             var assignTarget = assign.Target as IdentifierExpression;
             Assert.True(assignTarget.Name == "myVar");
 
-            Assert.IsType<FieldAccessExpression>(assign.Expression);
-            var assignFieldAccess = assign.Expression as FieldAccessExpression;
-            Assert.IsType<IdentifierExpression>(assignFieldAccess.Lhs);
-
-            Assert.IsType<FieldAccessExpression>(assignFieldAccess.Rhs);
-            var assignInner1 = assignFieldAccess.Rhs as FieldAccessExpression;
-            Assert.IsType<CallExpression>(assignInner1.Lhs);
-
-            Assert.IsType<FieldAccessExpression>(assignInner1.Rhs);
-            var assignInner2 = assignInner1.Rhs as FieldAccessExpression;
-            Assert.IsType<IdentifierExpression>(assignInner2.Lhs);
-
-            Assert.IsType<FieldAccessExpression>(assignInner2.Rhs);
-            var assignInner3 = assignInner2.Rhs as FieldAccessExpression;
-            Assert.IsType<IdentifierExpression>(assignInner3.Lhs);
-            Assert.IsType<CallExpression>(assignInner3.Rhs);
+            Assert.IsType<DotExpression>(assign.Expression);
+            var assignFieldAccess = assign.Expression as DotExpression;
+            Assert.IsType<IdentifierExpression>(assignFieldAccess.Expressions.First());
+            Assert.IsType<CallExpression>(assignFieldAccess.Expressions.ElementAt(1));
+            Assert.IsType<IdentifierExpression>(assignFieldAccess.Expressions.ElementAt(2));
+            Assert.IsType<IdentifierExpression>(assignFieldAccess.Expressions.ElementAt(3));
+            Assert.IsType<CallExpression>(assignFieldAccess.Expressions.ElementAt(4));
         }
-        */
+        
         [Fact]
         public void ParseIndexerExpression()
         {
@@ -221,7 +209,7 @@ namespace RilaLang.Tests
             Assert.True(cIndexer.Parameters.Count == 1);
             Assert.IsType<BinaryOperatorExpression>(cIndexer.Parameters.First());
         }
-
+        
         [Fact]
         public void ParseFunctionCall()
         {
