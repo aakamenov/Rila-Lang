@@ -82,6 +82,9 @@ namespace RilaLang.Compiler
                 case TokenType.Return:
                     node = ParseReturnStatement();
                     break;
+                case TokenType.Use:
+                    node = ParseUseStatement();
+                    break;
                 default:
                     node = ParseExpressionOrAssignment();
                     ExpectNewLine();
@@ -326,6 +329,41 @@ namespace RilaLang.Compiler
             return new BreakStatement();
         }
 
+        private UseStatement ParseUseStatement()
+        {
+            Consume(); //use
+
+            var token = Peek();
+            var builder = new StringBuilder();
+
+            while(token.TokenType != TokenType.NewLine &&
+                  token.TokenType != TokenType.As && 
+                  token.TokenType != TokenType.EOF)
+            {
+                builder.Append(Consume().Content);
+                token = Peek();
+            }
+
+            if (builder.Length == 0)
+                AppendError("Expecting namespace!", token);
+
+            string alias = string.Empty; //Shouldn't be null
+
+            if(ConsumeIf(TokenType.As))
+            {
+                token = Consume();
+
+                if (token.TokenType != TokenType.Identifier)
+                    AppendError("Expecting alias identifier!", token);
+
+                alias = token.Content;
+            }
+
+            ExpectNewLine();
+
+            return new UseStatement(builder.ToString(), alias);
+        }
+
         private Precedence GetPrecedence()
         {
             var peek = Peek();
@@ -350,7 +388,7 @@ namespace RilaLang.Compiler
             MoveToNextLine();
         }
 
-        private void MoveToNextLine()
+        internal void MoveToNextLine()
         {
             while(true)
             {

@@ -7,30 +7,27 @@ using RilaLang.Compiler.Ast;
 
 namespace RilaLang.Compiler.Parselets
 {
-    public class FieldAccessParselet : IInfixParselet
+    public class DotExpressionParselet : IInfixParselet
     {
         public Precedence Precedence => Precedence.Postfix;
 
         public Expression Parse(RilaParser parser, Token token, Expression lhs)
         {
-            const string error = "Expecting a call, identifier or a literal value";
+            var expressions = new List<Expression>() { lhs };
 
-            if(!CheckType(lhs))
-                parser.AppendError(error, token);
+            do
+            {
+                expressions.Add(parser.ParseExpression(Precedence));
+            }
+            while (parser.ConsumeIf(TokenType.Dot));
 
-            var rhs = parser.ParseExpression();
-
-            if(!CheckType(rhs))
-                parser.AppendError(error, parser.Peek());
-
-            return new FieldAccessExpression(lhs, rhs);
+            return new DotExpression(expressions);
         }
 
         private bool CheckType(Expression expression) //TODO: maybe remove this?
         {
             if (expression is CallExpression ||
                 expression is IdentifierExpression ||
-                expression is FieldAccessExpression ||
                 expression is IndexerExpression ||
                 expression.GetType().IsAssignableFrom(typeof(ValueExpression<>)))
             {

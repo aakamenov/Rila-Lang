@@ -30,7 +30,7 @@ namespace RilaLang.Hosting
                 var lexer = new Lexer(sourceUnit.GetReader().ReadToEnd());
                 var program = new RilaParser(lexer).Parse().ConstructProgram(rila);
                                
-                return new RilaScriptCode(program.Compile(), sourceUnit);
+                return new RilaScriptCode(program.Compile(), rila, sourceUnit);
             }
             catch(Exception e)
             {

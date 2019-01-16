@@ -41,7 +41,7 @@ namespace RilaLang.Tests
             Assert.True(multiArgsFun.Body.Statements.Count == 1);
             Assert.IsType<IfStatement>(multiArgsFun.Body.Statements.First());
         }
-
+        /*
         [Fact]
         public void ParseWhileLoop()
         {
@@ -86,7 +86,7 @@ namespace RilaLang.Tests
 
             Assert.IsType<AssignmentStatement>(ast.Statements.ElementAt(1));
         }
-
+        
         [Fact]
         public void ParseForLoop()
         {
@@ -131,7 +131,7 @@ namespace RilaLang.Tests
 
             Assert.IsType<AssignmentStatement>(ast.Statements.ElementAt(1));
         }
-
+        
         [Fact]
         public void ParseFieldAccess()
         {
@@ -179,7 +179,7 @@ namespace RilaLang.Tests
             Assert.IsType<IdentifierExpression>(assignInner3.Lhs);
             Assert.IsType<CallExpression>(assignInner3.Rhs);
         }
-
+        */
         [Fact]
         public void ParseIndexerExpression()
         {

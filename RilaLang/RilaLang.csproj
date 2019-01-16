@@ -60,18 +60,20 @@
     <Compile Include="Compiler\Ast\CallExpression.cs" />
     <Compile Include="Compiler\Ast\ContinueStatement.cs" />
     <Compile Include="Compiler\Ast\Expression.cs" />
-    <Compile Include="Compiler\Ast\FieldAccessExpression.cs" />
+    <Compile Include="Compiler\Ast\DotExpression.cs" />
     <Compile Include="Compiler\Ast\ForLoopStatement.cs" />
     <Compile Include="Compiler\Ast\FunctionDefinition.cs" />
     <Compile Include="Compiler\Ast\IdentifierExpression.cs" />
     <Compile Include="Compiler\Ast\IfStatement.cs" />
     <Compile Include="Compiler\Ast\IndexerExpression.cs" />
     <Compile Include="Compiler\Ast\Module.cs" />
+    <Compile Include="Compiler\Ast\NewExpression.cs" />
     <Compile Include="Compiler\Ast\PostfixOperatorExpression.cs" />
     <Compile Include="Compiler\Ast\PrefixOperatorExpression.cs" />
     <Compile Include="Compiler\Ast\RangeExpression.cs" />
     <Compile Include="Compiler\Ast\ReturnStatement.cs" />
     <Compile Include="Compiler\Ast\Statement.cs" />
+    <Compile Include="Compiler\Ast\UseStatement.cs" />
     <Compile Include="Compiler\Ast\ValueExpression.cs" />
     <Compile Include="Compiler\Ast\WhileLoopStatement.cs" />
     <Compile Include="Compiler\GenScope.cs" />
@@ -79,13 +81,14 @@
     <Compile Include="Compiler\Parselets\BinaryOperatorParslet.cs" />
     <Compile Include="Compiler\Parselets\BoolParselet.cs" />
     <Compile Include="Compiler\Parselets\CallParselet.cs" />
-    <Compile Include="Compiler\Parselets\FieldAccessParselet.cs" />
+    <Compile Include="Compiler\Parselets\DotExpressionParselet.cs" />
     <Compile Include="Compiler\Parselets\GroupParselet.cs" />
     <Compile Include="Compiler\Parselets\IdentifierParselet.cs" />
     <Compile Include="Compiler\Parselets\IInfixParselet.cs" />
     <Compile Include="Compiler\Parselets\IndexerParselet.cs" />
     <Compile Include="Compiler\Parselets\IPrecedence.cs" />
     <Compile Include="Compiler\Parselets\IPrefixParselet.cs" />
+    <Compile Include="Compiler\Parselets\NewParselet.cs" />
     <Compile Include="Compiler\Parselets\NumberParselet.cs" />
     <Compile Include="Compiler\Parselets\PostfixOperatorParselet.cs" />
     <Compile Include="Compiler\Parselets\Precedence.cs" />
@@ -103,6 +106,7 @@
     <Compile Include="Runtime\Binding\DynamicObjectHelpers.cs" />
     <Compile Include="Runtime\Binding\RangeOperationBinder.cs" />
     <Compile Include="Runtime\Binding\RilaBinaryOperationBinder.cs" />
+    <Compile Include="Runtime\Binding\RilaCreateInstanceBinder.cs" />
     <Compile Include="Runtime\Binding\RilaGetIndexBinder.cs" />
     <Compile Include="Runtime\Binding\RilaGetMemberBinder.cs" />
     <Compile Include="Runtime\Binding\RilaInvokeBinder.cs" />
@@ -111,8 +115,10 @@
     <Compile Include="Runtime\Binding\RuntimeHelpers.cs" />
     <Compile Include="Runtime\Binding\Utils\TypeModel.cs" />
     <Compile Include="Runtime\Binding\Utils\TypeModelMetaObject.cs" />
+    <Compile Include="Runtime\Binding\Utils\UnresolvedType.cs" />
     <Compile Include="Runtime\Rila.cs" />
     <Compile Include="Runtime\RilaTable.cs" />
+    <Compile Include="Runtime\TypeProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

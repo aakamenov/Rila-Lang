@@ -16,11 +16,13 @@ namespace RilaLang.Hosting
 {
     public class RilaScriptCode : ScriptCode
     {
-        private readonly Func<dynamic> compiledCode;
+        private readonly Func<Rila, dynamic> compiledCode;
+        private readonly Rila runtime;
 
-        public RilaScriptCode(Func<dynamic> compiledCode, SourceUnit sourceUnit) : base(sourceUnit)
+        public RilaScriptCode(Func<Rila, dynamic> compiledCode, Rila runtime, SourceUnit sourceUnit) : base(sourceUnit)
         {
             this.compiledCode = compiledCode;
+            this.runtime = runtime;
         }
 
         public override object Run()
@@ -30,7 +32,7 @@ namespace RilaLang.Hosting
 
         public override object Run(Scope scope)
         {
-            return compiledCode();
+            return compiledCode(runtime);
         }
     }
 }

@@ -52,7 +52,7 @@ namespace RilaLang.Compiler.Ast
                         typeof(bool)),
                         DLR.Expression.Block(
                             new[] { bindVar },
-                            DLR.Expression.Assign(bindVar, DLR.Expression.Dynamic(new RilaGetMemberBinder("Current"), typeof(object), enumeratorVar)), // Assign member binder
+                            DLR.Expression.Assign(bindVar, DLR.Expression.Dynamic(scope.Runtime.GetGetMemberBinder("Current"), typeof(object), enumeratorVar)),
                             block),
                         DLR.Expression.Break(breakLabel)),
                     breakLabel);

@@ -24,9 +24,11 @@ namespace RilaLang.Compiler.Ast
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
-            var args = new List<DLR.Expression>();
-            args.Add(Identifier.GenerateExpressionTree(scope));
-            args.AddRange(Parameters.Select(x => x.GenerateExpressionTree(scope)));
+            var args = new DLR.Expression[Parameters.Count + 1];
+            args[0] = Identifier.GenerateExpressionTree(scope);
+
+            for (int i = 1; i <= Parameters.Count; i++)
+                args[i] = Parameters.ElementAt(i - 1).GenerateExpressionTree(scope);
 
             return DLR.Expression.Dynamic(new RilaGetIndexBinder(new CallInfo(Parameters.Count)), typeof(object), args);
         }

@@ -43,9 +43,8 @@ namespace RilaLang.Runtime.Binding
 
                 return Defer(deferArgs);
             }
-            // Find our own binding.
-            // Could consider allowing invoking static members from an instance.
-            var flags = BindingFlags.Instance | BindingFlags.Public;
+
+            var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static;
 
             var members = target.LimitType.GetMember(Name, flags);
 

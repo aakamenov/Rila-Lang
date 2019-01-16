@@ -19,7 +19,7 @@ namespace RilaLang.Compiler.Ast
             Name = string.IsNullOrEmpty(name) ? Guid.NewGuid().ToString() : name;
         }
 
-        public DLR.Expression<Func<dynamic>> ConstructProgram(Rila runtime)
+        public DLR.Expression<Func<Rila, dynamic>> ConstructProgram(Rila runtime)
         {
             var scope = new GenScopeRoot(runtime);
 
@@ -32,8 +32,7 @@ namespace RilaLang.Compiler.Ast
             var globals = scope.Definitions.Select(x => x.Value);
 
             var block = DLR.Expression.Block(globals, stmts);
-
-            return DLR.Expression.Lambda<Func<dynamic>>(block);
+            return DLR.Expression.Lambda<Func<Rila, dynamic>>(block, scope.Root.RuntimeParameter);
         }
     }
 }

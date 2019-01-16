@@ -28,7 +28,10 @@ namespace RilaLang.Compiler
             { "and", TokenType.And },
             { "or", TokenType.Or },
             { "break", TokenType.Break },
-            { "continue", TokenType.Continue }
+            { "continue", TokenType.Continue },
+            { "new", TokenType.New },
+            { "use", TokenType.Use },
+            { "as", TokenType.As }
         };
 
         public Token(TokenType type, string content, uint indentationLevel, uint line, uint column)
@@ -107,6 +110,8 @@ namespace RilaLang.Compiler
         True,
         False,
         Break,
-        Continue
+        Continue,
+        New,
+        As
     }
 }

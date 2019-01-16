@@ -129,10 +129,12 @@ namespace RilaLang.Compiler
     public class GenScopeRoot : GenScope
     {
         public Dictionary<string, DLR.LambdaExpression> FunctionDefinitions { get; }
+        public DLR.ParameterExpression RuntimeParameter { get; }
 
         public GenScopeRoot(Rila runtime) : base(runtime)
         {
             FunctionDefinitions = new Dictionary<string, DLR.LambdaExpression>();
+            RuntimeParameter = DLR.Expression.Parameter(typeof(Rila));
             Root = this;
         }
     }

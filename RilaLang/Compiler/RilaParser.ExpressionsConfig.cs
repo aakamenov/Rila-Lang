@@ -45,9 +45,10 @@ namespace RilaLang.Compiler
             RegisterInfix(TokenType.NotEqual, new BinaryOperatorParslet(Precedence.Equality));
 
             //Other
-            RegisterInfix(TokenType.Dot, new FieldAccessParselet());
+            RegisterInfix(TokenType.Dot, new DotExpressionParselet());
             RegisterInfix(TokenType.Range, new RangeOperatorParselet());
             RegisterInfix(TokenType.LSquare, new IndexerParselet());
+            RegisterPrefix(TokenType.New, new NewParselet());
         }
 
         private void RegisterPrefix(TokenType type, IPrefixParselet handler)

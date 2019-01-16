@@ -54,13 +54,103 @@ namespace RilaLang.Tests
             var code = @"
 a = 1..10
 a[5]
-
 ";
 
             var engine = Rila.CreateRilaEngine();
             var result = engine.Execute(code);
 
             Assert.True(result == 6);
+        }
+
+        [Fact]
+        public void SetIndexInVariable()
+        {
+            var code = @"
+a = 1..10
+a[4] = 50
+a[4]
+";
+
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.True(result == 50);
+        }
+
+        [Fact]
+        public void NewExpressionWithoutArguments()
+        {
+            var code = @"
+use System.Text
+
+a = new StringBuilder()
+a.Append(""test"")
+a.ToString()
+";
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+            
+            Assert.True(result == "test");
+        }
+
+        [Fact]
+        public void NewExpressionWithArguments()
+        {
+            var code = @"
+use System.Text
+
+a = new StringBuilder(5, 10)
+a
+";
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+            
+            Assert.IsType<StringBuilder>(result);
+        }
+
+        [Fact]
+        public void NewExpressionWithAlias()
+        {
+            var code = @"
+use System.Text as text
+
+a = new text.StringBuilder(5, 10)
+a
+";
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.IsType<StringBuilder>(result);
+        }
+
+        [Fact]
+        public void NewExpressionWithGenericArguments()
+        {
+            var code = @"
+use System.Collections.Generic
+
+a = new List`1()
+a
+";
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+            
+            Assert.IsType<List<int>>(result);
+        }
+
+        [Fact]
+        public void StaticCall()
+        {
+            var code = @"
+use System
+
+a = Guid.NewGuid()
+a
+";
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.IsType<Guid>(result);
         }
     }
 }

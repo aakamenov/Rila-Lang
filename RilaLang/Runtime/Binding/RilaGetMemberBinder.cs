@@ -8,12 +8,18 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Scripting.ComInterop;
 using Microsoft.Scripting.Utils;
+using RilaLang.Runtime.Binding.Utils;
 
 namespace RilaLang.Runtime.Binding
 {
     public class RilaGetMemberBinder : GetMemberBinder
     {
-        public RilaGetMemberBinder(string name) : base(name, false) { }
+        private readonly Rila runtime;
+
+        public RilaGetMemberBinder(string name, Rila runtime) : base(name, false)
+        {
+            this.runtime = runtime;
+        }
 
         public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
         {

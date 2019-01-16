@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Dynamic;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
+using RilaLang.Runtime.Binding;
 
 namespace RilaLang.Compiler.Ast
 {
@@ -23,11 +25,6 @@ namespace RilaLang.Compiler.Ast
         {
             var identifier = (IdentifierExpression)Function;
 
-            //TODO: Instead of throwing here, should introduce some sort of a binder
-            //in a dynamic expression to look for the definition in the loaded assemblies
-            if (!scope.Root.FunctionDefinitions.ContainsKey(identifier.Name))
-                throw new InvalidOperationException($"Trying to call \"{identifier.Name}\" which is not defined!");
-
             var args = new DLR.Expression[Arguments.Count];
 
             for(var i = 0; i < Arguments.Count; i++)
@@ -35,7 +32,10 @@ namespace RilaLang.Compiler.Ast
                 args[i] = Arguments.ElementAt(i).GenerateExpressionTree(scope);
             }
 
-            return DLR.Expression.Invoke(scope.Root.FunctionDefinitions[identifier.Name], args);
+            if (scope.Root.FunctionDefinitions.TryGetValue(identifier.Name, out LambdaExpression lambda))
+                return DLR.Expression.Invoke(lambda, args);
+
+            return DLR.Expression.Dynamic(new RilaInvokeBinder(new CallInfo(Arguments.Count)), typeof(object), args);
         }
     }
 }

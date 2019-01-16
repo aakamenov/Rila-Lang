@@ -23,22 +23,26 @@ namespace RilaLang.Runtime
         public ExpandoObject Globals { get; }
 
         public RangeOperationBinder RangeOperationBinder { get; }
-        
+
+        public TypeProvider TypeProvider { get; }
+
         private Dictionary<ExpressionType, RilaBinaryOperationBinder> binaryOperationBinders;
-        private IList<Assembly> assemblies;
+        private Dictionary<string, RilaGetMemberBinder> getMemberBinders;
+        private Dictionary<CallInfo, RilaCreateInstanceBinder> createInstanceBinders;
 
         public Rila(IList<Assembly> assemblies, Scope dlrGlobals)
         {
             DlrGlobals = dlrGlobals;
             Globals = new ExpandoObject();
 
-            this.assemblies = assemblies;
-            binaryOperationBinders = new Dictionary<ExpressionType, RilaBinaryOperationBinder>();
+            TypeProvider = new TypeProvider(assemblies);
 
+            binaryOperationBinders = new Dictionary<ExpressionType, RilaBinaryOperationBinder>();
+            getMemberBinders = new Dictionary<string, RilaGetMemberBinder>();
+            createInstanceBinders = new Dictionary<CallInfo, RilaCreateInstanceBinder>();
             RangeOperationBinder = new RangeOperationBinder();
-            //AddAssemblyNamesAndTypes();
         }
-        
+
         public static ScriptEngine CreateRilaEngine()
         {
             return new ScriptRuntime(CreateRuntimeSetup()).GetEngine(LANG_NAME);
@@ -55,11 +59,33 @@ namespace RilaLang.Runtime
 
         public RilaBinaryOperationBinder GetBinaryOperationBinder(ExpressionType operation)
         {
-            if (binaryOperationBinders.TryGetValue(operation, out RilaBinaryOperationBinder result))
-                return result;
+            if (binaryOperationBinders.TryGetValue(operation, out RilaBinaryOperationBinder binder))
+                return binder;
 
-            var binder = new RilaBinaryOperationBinder(operation);
+            binder = new RilaBinaryOperationBinder(operation);
             binaryOperationBinders[operation] = binder;
+
+            return binder;
+        }
+
+        public RilaGetMemberBinder GetGetMemberBinder(string memberName)
+        {
+            if (getMemberBinders.TryGetValue(memberName, out RilaGetMemberBinder binder))
+                return binder;
+
+            binder = new RilaGetMemberBinder(memberName, this);
+            getMemberBinders[memberName] = binder;
+
+            return binder;
+        }
+
+        public RilaCreateInstanceBinder GetCreateInstanceBinder(CallInfo callInfo)
+        {
+            if (createInstanceBinders.TryGetValue(callInfo, out RilaCreateInstanceBinder binder))
+                return binder;
+
+            binder = new RilaCreateInstanceBinder(callInfo, this);
+            createInstanceBinders[callInfo] = binder;
 
             return binder;
         }
