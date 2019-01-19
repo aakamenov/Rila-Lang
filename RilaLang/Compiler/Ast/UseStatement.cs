@@ -30,7 +30,7 @@ namespace RilaLang.Compiler.Ast
                 scope.Root.RuntimeParameter);
 
             return DLR.Expression.Dynamic(
-                new RilaInvokeMemberBinder("LoadNamespace", new CallInfo(2)),
+                scope.Runtime.GetInvokeMemberBinder(new Tuple<string, CallInfo>("LoadNamespace", new CallInfo(2))),
                 typeof(object),
                 getTypeProvider,
                 DLR.Expression.Constant(Namespace),

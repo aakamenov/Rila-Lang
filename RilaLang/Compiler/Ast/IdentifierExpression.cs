@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Dynamic;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RilaLang.Runtime.Binding.Utils;
 
 namespace RilaLang.Compiler.Ast
 {
@@ -22,8 +24,8 @@ namespace RilaLang.Compiler.Ast
             if(scope.TryGetVariable(Name, out DLR.ParameterExpression result))
             {
                 return result;
-            }
-            
+            }  
+
             throw new InvalidOperationException($"\"{Name}\" is not defined!");
         }
     }

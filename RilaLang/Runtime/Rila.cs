@@ -29,6 +29,7 @@ namespace RilaLang.Runtime
         private Dictionary<ExpressionType, RilaBinaryOperationBinder> binaryOperationBinders;
         private Dictionary<string, RilaGetMemberBinder> getMemberBinders;
         private Dictionary<CallInfo, RilaCreateInstanceBinder> createInstanceBinders;
+        private Dictionary<Tuple<string, CallInfo>, RilaInvokeMemberBinder> invokeMemberBinders;
 
         public Rila(IList<Assembly> assemblies, Scope dlrGlobals)
         {
@@ -40,6 +41,7 @@ namespace RilaLang.Runtime
             binaryOperationBinders = new Dictionary<ExpressionType, RilaBinaryOperationBinder>();
             getMemberBinders = new Dictionary<string, RilaGetMemberBinder>();
             createInstanceBinders = new Dictionary<CallInfo, RilaCreateInstanceBinder>();
+            invokeMemberBinders = new Dictionary<Tuple<string, CallInfo>, RilaInvokeMemberBinder>();
             RangeOperationBinder = new RangeOperationBinder();
         }
 
@@ -86,6 +88,17 @@ namespace RilaLang.Runtime
 
             binder = new RilaCreateInstanceBinder(callInfo, this);
             createInstanceBinders[callInfo] = binder;
+
+            return binder;
+        }
+
+        public RilaInvokeMemberBinder GetInvokeMemberBinder(Tuple<string, CallInfo> key)
+        {
+            if (invokeMemberBinders.TryGetValue(key, out RilaInvokeMemberBinder binder))
+                return binder;
+            
+            binder = new RilaInvokeMemberBinder(key.Item1, key.Item2, this);
+            invokeMemberBinders[key] = binder;
 
             return binder;
         }

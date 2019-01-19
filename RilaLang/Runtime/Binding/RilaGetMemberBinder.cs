@@ -39,13 +39,12 @@ namespace RilaLang.Runtime.Binding
 
             var members = target.LimitType.GetMember(Name, flags);
 
-            if (members.Length == 1)
+            if (members?.Length == 1)
             {
                 return new DynamicMetaObject(
                     RuntimeHelpers.EnsureObjectResult(
                         Expression.MakeMemberAccess(
-                            Expression.Convert(target.Expression,members[0].DeclaringType),
-                        members[0])),
+                            Expression.Convert(target.Expression, members[0].DeclaringType), members[0])),
                     // Don't need restriction test for name since this
                     // rule is only used where binder is used, which is
                     // only used in sites with this binder.Name.

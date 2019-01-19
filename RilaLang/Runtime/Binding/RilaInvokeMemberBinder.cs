@@ -8,12 +8,18 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Scripting.ComInterop;
 using Microsoft.Scripting.Utils;
+using RilaLang.Runtime.Binding.Utils;
 
 namespace RilaLang.Runtime.Binding
 {
     public class RilaInvokeMemberBinder : InvokeMemberBinder
-    {     
-        public RilaInvokeMemberBinder(string name, CallInfo callInfo) : base(name, false, callInfo) { }
+    {
+        private readonly Rila runtime;
+
+        public RilaInvokeMemberBinder(string name, CallInfo callInfo, Rila runtime) : base(name, false, callInfo)
+        {
+            this.runtime = runtime;
+        }
 
         public override DynamicMetaObject FallbackInvokeMember(
             DynamicMetaObject target, 
@@ -45,8 +51,19 @@ namespace RilaLang.Runtime.Binding
             }
 
             var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static;
+            var members = Array.Empty<MemberInfo>();
+            var isStatic = false;
 
-            var members = target.LimitType.GetMember(Name, flags);
+            if(target.RuntimeType == typeof(UnresolvedType))
+            {
+                if (runtime.TypeProvider.TryGetType(target.Value as UnresolvedType, out Type type))
+                {
+                    members = type.GetMember(Name, flags);
+                    isStatic = true;
+                }
+            }
+            else
+                members = target.LimitType.GetMember(Name, flags);
 
             if ((members.Length == 1) && (members[0] is PropertyInfo || members[0] is FieldInfo))
             {
@@ -91,8 +108,16 @@ namespace RilaLang.Runtime.Binding
                         RuntimeHelpers.CreateThrow(target, args, restrictions, typeof(MissingMemberException),
                             new string[] { $"Missing member {args.ToString()}" });
                 }
+
                 // restrictions and conversion must be done consistently.
                 var callArgs = RuntimeHelpers.ConvertArguments(args, res[0].GetParameters());
+
+                if (isStatic)
+                {
+                    return new DynamicMetaObject(
+                       RuntimeHelpers.EnsureObjectResult(Expression.Call(null, res[0], callArgs)),
+                       restrictions);
+                }
 
                 return new DynamicMetaObject(
                    RuntimeHelpers.EnsureObjectResult(

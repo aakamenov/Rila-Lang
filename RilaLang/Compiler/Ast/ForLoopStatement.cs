@@ -36,11 +36,20 @@ namespace RilaLang.Compiler.Ast
             var block = Block.GenerateExpressionTree(loopScope);
 
             var enumeratorVar = DLR.Expression.Variable(typeof(object), VariableName);
-            var getEnumeratorCall = DLR.Expression.Dynamic(new RilaInvokeMemberBinder("GetEnumerator", new CallInfo(0)), typeof(object), inExpr);
-            var enumeratorAssign = DLR.Expression.Assign(enumeratorVar, getEnumeratorCall);
-            var enumeratorDispose = DLR.Expression.Dynamic(new RilaInvokeMemberBinder("Dispose", new CallInfo(0)), typeof(void), enumeratorVar);
 
-            var moveNextCall = DLR.Expression.Dynamic(new RilaInvokeMemberBinder("MoveNext", new CallInfo(0)), typeof(object), enumeratorVar);
+            var getEnumeratorCall = DLR.Expression.Dynamic(
+                scope.Runtime.GetInvokeMemberBinder(new Tuple<string, CallInfo>("GetEnumerator", new CallInfo(0))),
+                typeof(object), 
+                inExpr);
+
+            var enumeratorAssign = DLR.Expression.Assign(enumeratorVar, getEnumeratorCall);
+            var enumeratorDispose = DLR.Expression.Dynamic(scope.Runtime.GetInvokeMemberBinder(new Tuple<string, CallInfo>("Dispose", new CallInfo(0))),
+                typeof(void),
+                enumeratorVar);
+
+            var moveNextCall = DLR.Expression.Dynamic(scope.Runtime.GetInvokeMemberBinder(new Tuple<string, CallInfo>("MoveNext", new CallInfo(0))),
+                typeof(object),
+                enumeratorVar);
 
             var breakLabel = DLR.Expression.Label("ForLoopBreak");
 
