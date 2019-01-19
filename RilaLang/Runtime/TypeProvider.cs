@@ -13,11 +13,13 @@ namespace RilaLang.Runtime
     public class TypeProvider
     {
         private Dictionary<string, Type[]> namespaces;
+        private HashSet<string> aliases;
         private IList<Assembly> assemblies;
 
         public TypeProvider(IList<Assembly> assemblies)
         {
             namespaces = new Dictionary<string, Type[]>();
+            aliases = new HashSet<string>();
             this.assemblies = assemblies;
         }
 
@@ -37,10 +39,11 @@ namespace RilaLang.Runtime
                 try
                 {
                     namespaces.Add(name, matchingTypes);
+                    aliases.Add(alias);
                 }
                 catch(ArgumentException)
                 {
-                    throw new ArgumentException($"Namespace \"{@namespace}\" has already been imported!");
+                    throw new ArgumentException($"Namespace or alias \"{@namespace}\" has already been imported!");
                 }
 
                 match = true;
@@ -49,6 +52,11 @@ namespace RilaLang.Runtime
 
             if (!match)
                 throw new ArgumentException($"Could not find namespace \"{@namespace}\"");
+        }
+
+        public bool IsAlias(string alias)
+        {
+            return aliases.Contains(alias);
         }
 
         public bool TryGetType(UnresolvedType unresolved, out Type type)

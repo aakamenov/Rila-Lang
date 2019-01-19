@@ -36,11 +36,40 @@ namespace RilaLang.Runtime.Binding
 
             // Find our own binding.
             var flags = BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public;
+            var members = Array.Empty<MemberInfo>();
+            var isStatic = false;
 
-            var members = target.LimitType.GetMember(Name, flags);
+            if(target.RuntimeType == typeof(UnresolvedType))
+            {
+                var unresolved = target.Value as UnresolvedType;
+
+                if (runtime.TypeProvider.IsAlias(unresolved.Name))
+                {
+                    //Simply pass the name of the member we are trying to access as that is the actual member name
+                    return new DynamicMetaObject(
+                        Expression.Constant(new UnresolvedType(Name)), BindingRestrictions.Empty);
+                }
+
+                if (runtime.TypeProvider.TryGetType(unresolved, out Type type))
+                {
+                    members = type.GetMember(Name, flags);
+                    isStatic = true;
+                }
+            }
+            else
+                members = target.LimitType.GetMember(Name, flags);
 
             if (members?.Length == 1)
             {
+                if (isStatic)
+                {
+                    return new DynamicMetaObject(
+                        RuntimeHelpers.EnsureObjectResult(
+                            Expression.MakeMemberAccess(null, members[0])),
+                        BindingRestrictions.GetTypeRestriction(target.Expression, target.LimitType));
+                }
+                
+
                 return new DynamicMetaObject(
                     RuntimeHelpers.EnsureObjectResult(
                         Expression.MakeMemberAccess(

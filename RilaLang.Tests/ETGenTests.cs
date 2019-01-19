@@ -152,5 +152,50 @@ a
 
             Assert.IsType<Guid>(result);
         }
+
+        [Fact]
+        public void StaticCallWithAlias()
+        {
+            var code = @"
+use System as sys
+
+a = sys.Guid.NewGuid()
+a
+";
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.IsType<Guid>(result);
+        }
+
+        [Fact]
+        public void StaticMemberAccess()
+        {
+            var code = @"
+use System
+
+a = String.Empty
+a
+";
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.IsType<string>(result);
+        }
+
+        [Fact]
+        public void StaticMemberAccessWithAlias()
+        {
+            var code = @"
+use System as sys
+
+a = sys.String.Empty
+a
+";
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.IsType<string>(result);
+        }
     }
 }
