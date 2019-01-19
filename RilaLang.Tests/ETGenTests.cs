@@ -78,6 +78,32 @@ a[4]
         }
 
         [Fact]
+        public void ImportingTheSameNamespaceTwiceThrows()
+        {
+            var code = @"
+use System
+use System
+";
+            var engine = Rila.CreateRilaEngine();
+            Action action = () => engine.Execute(code);
+
+            Assert.Throws<ArgumentException>(action);
+        }
+
+        [Fact]
+        public void DuplicateAliasThrows()
+        {
+            var code = @"
+use System as sys
+use System.Text as sys
+";
+            var engine = Rila.CreateRilaEngine();
+            Action action = () => engine.Execute(code);
+
+            Assert.Throws<ArgumentException>(action);
+        }
+
+        [Fact]
         public void NewExpressionWithoutArguments()
         {
             var code = @"
