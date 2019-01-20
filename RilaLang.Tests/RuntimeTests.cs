@@ -63,7 +63,7 @@ a[5]
         }
 
         [Fact]
-        public void SetIndexInVariable()
+        public void SetIndex()
         {
             var code = @"
 a = 1..10
@@ -75,6 +75,23 @@ a[4]
             var result = engine.Execute(code);
 
             Assert.True(result == 50);
+        }
+
+        [Fact]
+        public void DotExpressionSetMember()
+        {
+            var code = @"
+use System.Net
+
+o = new Cookie()
+o.Comment = ""test""
+o.Comment
+";
+
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+            
+            Assert.True(result == "test");
         }
 
         [Fact]

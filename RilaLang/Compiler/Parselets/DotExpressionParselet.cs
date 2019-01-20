@@ -21,7 +21,14 @@ namespace RilaLang.Compiler.Parselets
             }
             while (parser.ConsumeIf(TokenType.Dot));
 
-            return new DotExpression(expressions);
+            if(parser.ConsumeIf(TokenType.Assign))
+            {
+                expressions.Add(parser.ParseExpression());
+
+                return new DotExpression(expressions, true);
+            }
+
+            return new DotExpression(expressions, false);
         }
     }
 }

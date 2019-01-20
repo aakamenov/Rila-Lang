@@ -94,17 +94,6 @@ namespace RilaLang.Compiler
             return node;
         }
 
-        internal AstNode ParseExpressionOrAssignment()
-        {
-            var left = ParseExpression();
-            var token = Peek();
-
-            if (token.TokenType == TokenType.NewLine || token.TokenType == TokenType.EOF)
-                return left;
-
-            return FinishAssignment(left);
-        }
-
         internal Expression ParseExpression(Precedence precedence = Precedence.None)
         {
             var token = Consume();
@@ -187,6 +176,17 @@ namespace RilaLang.Compiler
         internal void AppendError(string error, Token token)
         {
             errorSink.AppendLine($"Error on line {token.Line}:{token.Column} -> {error}");
+        }
+
+        private AstNode ParseExpressionOrAssignment()
+        {
+            var left = ParseExpression();
+            var token = Peek();
+
+            if (token.TokenType == TokenType.NewLine || token.TokenType == TokenType.EOF)
+                return left;
+
+            return FinishAssignment(left);
         }
 
         private AssignmentStatement FinishAssignment(Expression left)

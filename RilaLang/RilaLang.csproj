@@ -111,6 +111,7 @@
     <Compile Include="Runtime\Binding\RilaInvokeBinder.cs" />
     <Compile Include="Runtime\Binding\RilaInvokeMemberBinder.cs" />
     <Compile Include="Runtime\Binding\RilaSetIndexBinder.cs" />
+    <Compile Include="Runtime\Binding\RilaSetMemberBinder.cs" />
     <Compile Include="Runtime\Binding\RuntimeHelpers.cs" />
     <Compile Include="Runtime\Binding\Utils\UnresolvedType.cs" />
     <Compile Include="Runtime\Rila.cs" />

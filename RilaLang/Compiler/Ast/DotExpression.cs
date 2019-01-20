@@ -14,10 +14,12 @@ namespace RilaLang.Compiler.Ast
     public class DotExpression : Expression
     {
         public IReadOnlyCollection<Expression> Expressions { get; }
+        public bool IsSetMember { get; }
 
-        public DotExpression(IList<Expression> expression)
+        public DotExpression(IList<Expression> expression, bool isSetMember)
         {
             Expressions = new ReadOnlyCollection<Expression>(expression);
+            IsSetMember = isSetMember;
         }
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
@@ -42,7 +44,20 @@ namespace RilaLang.Compiler.Ast
                 switch (Expressions.ElementAt(element))
                 {
                     case IdentifierExpression identifier:
-                        result = DLR.Expression.Dynamic(scope.Runtime.GetGetMemberBinder(identifier.Name), typeof(object), result);
+                        {
+                            if(IsSetMember && element == Expressions.Count - 2)
+                            {
+                                result = DLR.Expression.Dynamic(
+                                    new RilaSetMemberBinder(identifier.Name),
+                                    typeof(object),
+                                    result,
+                                    Expressions.Last().GenerateExpressionTree(scope)); //The last expression is the new value
+
+                                element = Expressions.Count;
+                            }
+                            else
+                                result = DLR.Expression.Dynamic(scope.Runtime.GetGetMemberBinder(identifier.Name), typeof(object), result);
+                        }
                         break;
                     case CallExpression call:
                         {
