@@ -103,7 +103,6 @@
     <Compile Include="Hosting\RilaScriptCode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Runtime\Binding\DynamicObjectHelpers.cs" />
     <Compile Include="Runtime\Binding\RangeOperationBinder.cs" />
     <Compile Include="Runtime\Binding\RilaBinaryOperationBinder.cs" />
     <Compile Include="Runtime\Binding\RilaCreateInstanceBinder.cs" />
@@ -113,11 +112,8 @@
     <Compile Include="Runtime\Binding\RilaInvokeMemberBinder.cs" />
     <Compile Include="Runtime\Binding\RilaSetIndexBinder.cs" />
     <Compile Include="Runtime\Binding\RuntimeHelpers.cs" />
-    <Compile Include="Runtime\Binding\Utils\TypeModel.cs" />
-    <Compile Include="Runtime\Binding\Utils\TypeModelMetaObject.cs" />
     <Compile Include="Runtime\Binding\Utils\UnresolvedType.cs" />
     <Compile Include="Runtime\Rila.cs" />
-    <Compile Include="Runtime\RilaTable.cs" />
     <Compile Include="Runtime\TypeProvider.cs" />
   </ItemGroup>
   <ItemGroup>
