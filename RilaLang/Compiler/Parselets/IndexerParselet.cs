@@ -26,7 +26,14 @@ namespace RilaLang.Compiler.Parselets
                 parser.Expect(out Token rSquare, TokenType.RSquare);
             }
 
-            return new IndexerExpression(lhs, parameters);
+            if(parser.ConsumeIf(TokenType.Assign))
+            {
+                parameters.Add(parser.ParseExpression());
+
+                return new IndexerExpression(lhs, parameters, true);
+            }
+
+            return new IndexerExpression(lhs, parameters, false);
         }
     }
 }

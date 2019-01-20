@@ -25,9 +25,7 @@ namespace RilaLang.Compiler.Ast
         {
             var expression = Expression.GenerateExpressionTree(scope);
 
-            var identifier = Target as IdentifierExpression;
-
-            if (identifier != null) //Check if a new variable is introduced
+            if (Target is IdentifierExpression identifier) //Check if a new variable is introduced
             {
                 var name = identifier.Name;
 
@@ -39,7 +37,7 @@ namespace RilaLang.Compiler.Ast
 
                 return DLR.Expression.Assign(variable, expression);
             }
-
+            
             var target = Target.GenerateExpressionTree(scope);
             
             switch(Operation)

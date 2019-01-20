@@ -13,7 +13,7 @@ using RilaLang.Runtime;
 
 namespace RilaLang.Tests
 {
-    public class ETGenTests
+    public class RuntimeTests
     {
         [Fact]
         public void ExecuteBasicOperations()
@@ -49,7 +49,7 @@ namespace RilaLang.Tests
         }
         
         [Fact]
-        public void Indexing()
+        public void GetIndex()
         {
             var code = @"
 a = 1..10

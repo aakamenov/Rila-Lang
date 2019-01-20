@@ -26,7 +26,7 @@ namespace RilaLang.Compiler.Ast
 
             var first = Expressions.First();
             var ident = first as IdentifierExpression;
-
+            
             if (ident != null)
             {
                 if (scope.TryGetVariable(ident.Name, out ParameterExpression variable)) //expression performed on a variable
@@ -60,7 +60,10 @@ namespace RilaLang.Compiler.Ast
                         }
                         break;
                     case IndexerExpression indexer:
-                        throw new NotImplementedException(); //TODO: resolve indexing
+                        result = indexer.GenerateExpressionTree(scope);
+                        break;
+                    default:
+                        throw new ArgumentException("Expecting member access, call or indexer expression!");
                 }
             }
 

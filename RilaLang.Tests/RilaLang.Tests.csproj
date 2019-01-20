@@ -66,7 +66,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ETGenTests.cs" />
+    <Compile Include="RuntimeTests.cs" />
     <Compile Include="ForLoopTests.cs" />
     <Compile Include="LexerTests.cs" />
     <Compile Include="ParserTests.cs" />

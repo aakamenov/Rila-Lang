@@ -15,11 +15,13 @@ namespace RilaLang.Compiler.Ast
     {
         public Expression Identifier { get; }
         public IReadOnlyCollection<Expression> Parameters { get; }
+        public bool IsSet { get; }
 
-        public IndexerExpression(Expression identifier, IList<Expression> parameters)
+        public IndexerExpression(Expression identifier, IList<Expression> parameters, bool isSet)
         {
             Identifier = identifier;
             Parameters = new ReadOnlyCollection<Expression>(parameters);
+            IsSet = isSet;
         }
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
@@ -27,8 +29,11 @@ namespace RilaLang.Compiler.Ast
             var args = new DLR.Expression[Parameters.Count + 1];
             args[0] = Identifier.GenerateExpressionTree(scope);
 
-            for (int i = 1; i <= Parameters.Count; i++)
+            for (var i = 1; i <= Parameters.Count; i++)
                 args[i] = Parameters.ElementAt(i - 1).GenerateExpressionTree(scope);
+
+            if(IsSet) //Last param is the value from the rhs expression
+                return DLR.Expression.Dynamic(new RilaSetIndexBinder(new CallInfo(Parameters.Count)), typeof(object), args);
 
             return DLR.Expression.Dynamic(new RilaGetIndexBinder(new CallInfo(Parameters.Count)), typeof(object), args);
         }
