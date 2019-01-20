@@ -16,6 +16,22 @@ namespace RilaLang.Tests
     public class RuntimeTests
     {
         [Fact]
+        public void ProgramAlwaysReturnsAValue()
+        {
+            var code = @"
+a = 10
+
+if a > 10
+    a = 5
+";
+
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.True(result is null);
+        }
+
+        [Fact]
         public void ExecuteBasicOperations()
         {
             var code = File.ReadAllText("TestPrograms/ETGen/basic.rila");

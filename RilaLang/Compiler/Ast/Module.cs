@@ -32,6 +32,10 @@ namespace RilaLang.Compiler.Ast
             var globals = scope.Definitions.Select(x => x.Value);
 
             var block = DLR.Expression.Block(globals, stmts);
+
+            if (block.Type == typeof(void)) //Program should always return a value
+                block = DLR.Expression.Block(block, DLR.Expression.Default(typeof(object)));
+
             return DLR.Expression.Lambda<Func<Rila, dynamic>>(block, scope.Root.RuntimeParameter);
         }
     }
