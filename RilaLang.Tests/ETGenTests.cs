@@ -148,7 +148,7 @@ a
 
             Assert.IsType<StringBuilder>(result);
         }
-
+/*
         [Fact]
         public void NewExpressionWithGenericArguments()
         {
@@ -163,7 +163,7 @@ a
             
             Assert.IsType<List<int>>(result);
         }
-
+*/
         [Fact]
         public void StaticCall()
         {

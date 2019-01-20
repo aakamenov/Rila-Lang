@@ -17,9 +17,7 @@ namespace RilaLang.Runtime.Binding
         public override DynamicMetaObject FallbackBinaryOperation(DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject errorSuggestion)
         {
             if (!target.HasValue || !arg.HasValue)
-            {
                 return Defer(target, arg);
-            }
 
             var restrictions = target.Restrictions
                                .Merge(arg.Restrictions)

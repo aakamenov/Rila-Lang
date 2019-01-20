@@ -24,14 +24,18 @@ namespace RilaLang.Compiler.Ast
         {
             DLR.Expression result = null;
 
-            try //TODO: Refactor
+            var first = Expressions.First();
+            var ident = first as IdentifierExpression;
+
+            if (ident != null)
             {
-                result = Expressions.First().GenerateExpressionTree(scope);
+                if (scope.TryGetVariable(ident.Name, out ParameterExpression variable)) //expression performed on a variable
+                    result = variable;
+                else
+                    result = DLR.Expression.Constant(new UnresolvedType(ident.Name)); //static or alias access
             }
-            catch(InvalidOperationException)
-            {
-                result = DLR.Expression.Constant(new UnresolvedType(((IdentifierExpression)Expressions.First()).Name));
-            }
+            else
+                result = first.GenerateExpressionTree(scope);
             
             for(var element = 1; element < Expressions.Count; element++)
             {

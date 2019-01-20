@@ -23,18 +23,14 @@ namespace RilaLang.Runtime.Binding
 
         public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
         {
-            // First try COM binding.
             DynamicMetaObject result;
 
             if (ComBinder.TryBindGetMember(this, target, out result, true))
-            {
                 return result;
-            }
 
             if (!target.HasValue)
                 return Defer(target);
 
-            // Find our own binding.
             var flags = BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public;
             var members = Array.Empty<MemberInfo>();
             var isStatic = false;
@@ -59,7 +55,7 @@ namespace RilaLang.Runtime.Binding
             else
                 members = target.LimitType.GetMember(Name, flags);
 
-            if (members?.Length == 1)
+            if (members.Length == 1)
             {
                 if (isStatic)
                 {

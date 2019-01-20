@@ -20,7 +20,6 @@ namespace RilaLang.Runtime
         public const string LANG_NAME = "Rila";
 
         public Scope DlrGlobals { get; }
-        public ExpandoObject Globals { get; }
 
         public RangeOperationBinder RangeOperationBinder { get; }
 
@@ -34,7 +33,6 @@ namespace RilaLang.Runtime
         public Rila(IList<Assembly> assemblies, Scope dlrGlobals)
         {
             DlrGlobals = dlrGlobals;
-            Globals = new ExpandoObject();
 
             TypeProvider = new TypeProvider(assemblies);
 
@@ -42,6 +40,7 @@ namespace RilaLang.Runtime
             getMemberBinders = new Dictionary<string, RilaGetMemberBinder>();
             createInstanceBinders = new Dictionary<CallInfo, RilaCreateInstanceBinder>();
             invokeMemberBinders = new Dictionary<Tuple<string, CallInfo>, RilaInvokeMemberBinder>();
+
             RangeOperationBinder = new RangeOperationBinder();
         }
 

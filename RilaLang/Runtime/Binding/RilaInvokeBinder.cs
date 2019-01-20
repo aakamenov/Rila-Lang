@@ -20,12 +20,11 @@ namespace RilaLang.Runtime.Binding
             DynamicMetaObject[] args,
             DynamicMetaObject errorSuggestion)
         {
-            // First try COM binding.
             DynamicMetaObject result;
+
             if (ComBinder.TryBindInvoke(this, target, args, out result))
-            {
                 return result;
-            }
+
             // Defer if any object has no value so that we evaulate their
             // Expressions and nest a CallSite for the InvokeMember.
             if (!target.HasValue || args.Any((a) => !a.HasValue))
@@ -41,7 +40,7 @@ namespace RilaLang.Runtime.Binding
 
                 return Defer(deferArgs);
             }
-            // Find our own binding.
+
             if (target.LimitType.IsSubclassOf(typeof(Delegate)))
             {
                 var parms = target.LimitType.GetMethod("Invoke").GetParameters();

@@ -26,13 +26,10 @@ namespace RilaLang.Runtime.Binding
             DynamicMetaObject[] args,
             DynamicMetaObject errorSuggestion)
         {
-            // First try COM binding.
             DynamicMetaObject result;
 
             if (ComBinder.TryBindInvokeMember(this, target, args, out result))
-            {
                 return result;
-            }
 
             // Defer if any object has no value so that we evaulate their
             // Expressions and nest a CallSite for the InvokeMember.

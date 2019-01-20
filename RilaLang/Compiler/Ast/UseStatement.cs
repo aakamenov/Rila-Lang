@@ -25,12 +25,12 @@ namespace RilaLang.Compiler.Ast
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
             var getTypeProvider = DLR.Expression.Dynamic(
-                scope.Runtime.GetGetMemberBinder("TypeProvider"),
+                scope.Runtime.GetGetMemberBinder(nameof(Rila.TypeProvider)),
                 typeof(object),
-                scope.Root.RuntimeParameter);
-
+                scope.Root.RuntimeParameter);    
+            
             return DLR.Expression.Dynamic(
-                scope.Runtime.GetInvokeMemberBinder(new Tuple<string, CallInfo>("LoadNamespace", new CallInfo(2))),
+                scope.Runtime.GetInvokeMemberBinder(new Tuple<string, CallInfo>(nameof(TypeProvider.LoadNamespace), new CallInfo(2))),
                 typeof(object),
                 getTypeProvider,
                 DLR.Expression.Constant(Namespace),
