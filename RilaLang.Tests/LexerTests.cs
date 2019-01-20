@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Xunit;
 using Xunit.Sdk;
 using RilaLang.Compiler;
@@ -91,6 +92,20 @@ namespace RilaLang.Tests
             };
 
             AssertTokens(lexer, tokens);
+        }
+
+        [Fact]
+        public void UnrecognisedCharacterThrows()
+        {
+            void Iterate(Lexer lexer)
+            {
+                while(lexer.NextToken().TokenType != TokenType.EOF) { }
+            }
+
+            var code = "a = 10;";
+            Action action = () => Iterate(new Lexer(code));
+
+            Assert.Throws<RilaParserException>(action);
         }
 
         private void AssertTokens(Lexer lexer, Token[] testTokens)

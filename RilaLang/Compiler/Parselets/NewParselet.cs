@@ -15,10 +15,8 @@ namespace RilaLang.Compiler.Parselets
 
             var expression = parser.ParseExpression();
 
-            if(expression is DotExpression)
+            if(expression is DotExpression dot)
             {
-                var dot = expression as DotExpression;
-
                 var call = dot.Expressions.Last() as CallExpression;
                 var ctor = call.Function as IdentifierExpression;
 
@@ -33,9 +31,8 @@ namespace RilaLang.Compiler.Parselets
 
                 return new NewExpression(string.Join(".", namespaces.Select(x => x.Name)), call.Arguments);
             }
-            else if(expression is CallExpression)
+            else if(expression is CallExpression call)
             {
-                var call = expression as CallExpression;
                 var identifier = call.Function as IdentifierExpression;
 
                 if (identifier is null)

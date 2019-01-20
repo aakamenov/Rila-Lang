@@ -175,6 +175,9 @@ namespace RilaLang.Compiler
                     break;
                 default:
                     {
+                        if (!IsWordChar(next))
+                            throw new RilaParserException($"Unexpected token \"{next}\"!");
+
                         var word = ReadWord(next);
 
                         if (Token.TryGetKeyword(word, out TokenType tokenType))
