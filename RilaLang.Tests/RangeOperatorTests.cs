@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Xunit;
 using Microsoft.CSharp.RuntimeBinder;
 using RilaLang.Runtime;
+using RilaLang.Runtime.Binding.Utils;
 
 namespace RilaLang.Tests
 {
@@ -16,8 +17,13 @@ namespace RilaLang.Tests
             var engine = Rila.CreateRilaEngine();
             var result = engine.Execute(code);
 
-            Assert.True(result is IEnumerable<int>);
-            Assert.True(result.Length == 12);
+            Assert.True(result is RangeIterator<int>);
+            var enumerator = result.GetEnumerator();
+            Assert.True(enumerator.Current == 10);
+
+            while (enumerator.MoveNext()) { }
+
+            Assert.True(enumerator.Current == 21);
         }
 
         [Fact]
@@ -28,8 +34,14 @@ namespace RilaLang.Tests
             var engine = Rila.CreateRilaEngine();
             var result = engine.Execute(code);
 
-            Assert.True(result is IEnumerable<int>);
-            Assert.True(result.Length == 11);
+            Assert.True(result is RangeIterator<int>);
+
+            var enumerator = result.GetEnumerator();
+            Assert.True(enumerator.Current == 0);
+
+            while(enumerator.MoveNext()) { }
+
+            Assert.True(enumerator.Current == 10);
         }
 
         [Fact]
@@ -43,20 +55,26 @@ a = 5 + 5
             var engine = Rila.CreateRilaEngine();
             var result = engine.Execute(code);
 
-            Assert.True(result is IEnumerable<int>);
-            Assert.True(result.Length == 11);
+            Assert.True(result is RangeIterator<int>);
+
+            var enumerator = result.GetEnumerator();
+            Assert.True(enumerator.Current == 0);
+
+            while (enumerator.MoveNext()) { }
+
+            Assert.True(enumerator.Current == 10);
         }
 
         [Fact]
-        public void RangeOperationWithEqualParamsReturnsEmptyArray()
+        public void RangeOperationWithEqualParamsCantMoveNext()
         {
             var code = "5..5";
 
             var engine = Rila.CreateRilaEngine();
             var result = engine.Execute(code);
 
-            Assert.True(result is IEnumerable<int>);
-            Assert.True(result.Length == 0);
+            Assert.True(result is RangeIterator<int>);
+            Assert.True(result.GetEnumerator().MoveNext() == false);
         }
 
         [Fact]
@@ -67,7 +85,7 @@ a = 5 + 5
             var engine = Rila.CreateRilaEngine();
 
             Func<dynamic> wrapper = () => engine.Execute(code);
-            Assert.Throws<RuntimeBinderException>(wrapper);
+            Assert.Throws<ArgumentException>(wrapper);
         }
 
         [Fact]

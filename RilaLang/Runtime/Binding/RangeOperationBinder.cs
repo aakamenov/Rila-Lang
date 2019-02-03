@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Dynamic;
 using Microsoft.CSharp.RuntimeBinder;
+using RilaLang.Runtime.Binding.Utils;
 
 namespace RilaLang.Runtime.Binding
 {
@@ -16,16 +17,16 @@ namespace RilaLang.Runtime.Binding
         private static readonly Type[] AcceptedTypes = new Type[]
         {
             typeof(int),
-            typeof(double),
-            typeof(float),
-            typeof(decimal),
-            typeof(long),
-            typeof(ulong),
-            typeof(short),
-            typeof(ushort),
-            typeof(uint),
-            typeof(sbyte),
-            typeof(byte)
+            //typeof(double),
+            //typeof(float),
+            //typeof(decimal),
+            //typeof(long),
+            //typeof(ulong),
+            //typeof(short),
+            //typeof(ushort),
+            //typeof(uint),
+            //typeof(sbyte),
+            //typeof(byte)
         };
 
         public override DynamicMetaObject Bind(DynamicMetaObject target, DynamicMetaObject[] args)
@@ -42,39 +43,20 @@ namespace RilaLang.Runtime.Binding
 
             string errorMessage = null;
 
-            if (AcceptedTypes.Contains(target.RuntimeType) && AcceptedTypes.Contains(end.RuntimeType))
+            if (target.RuntimeType != end.RuntimeType)
             {
-                var startValue = (int)target.Value; //TODO: This will throw on values larger than int.MaxValue
-                var endValue = (int)end.Value;
-                
-                if (startValue < 0 || endValue < 0)
-                    errorMessage = "Operator \"..\" doesn't accept negative values!";
-                else if (endValue < startValue)
-                    errorMessage = "Right-hand side argument is less than the left-hand side argument supplied to operator \"..\"";
+                errorMessage = $"Types provided to operator \"..\" should match. Got \"{target.RuntimeType}\" and \"{end.RuntimeType}\"";
+            }
+            else if (AcceptedTypes.Contains(target.RuntimeType))
+            {
+                var ctor = typeof(RangeIterator<>).MakeGenericType(target.RuntimeType).GetConstructors().First();
 
-                if (string.IsNullOrEmpty(errorMessage))
-                {
-                    var iterations = endValue - startValue;
-                    ConstantExpression[] initializers = null;
-
-                    if (iterations > 0)
-                    {
-                        iterations += 1;
-                        var increment = 0;
-
-                        initializers = new ConstantExpression[iterations];
-
-                        for (int i = 0; i < iterations; i++)
-                        {
-                            initializers[i] = Expression.Constant(startValue + increment++);
-                        }
-                    }
-                    else
-                        initializers = Array.Empty<ConstantExpression>();
-
-                    return new DynamicMetaObject(RuntimeHelpers.EnsureObjectResult(
-                                    Expression.NewArrayInit(typeof(int), initializers)), restrictions);
-                }
+                return new DynamicMetaObject(
+                    Expression.New(
+                        ctor, 
+                        Expression.Constant(target.Value, target.RuntimeType), 
+                        Expression.Constant(end.Value, end.RuntimeType)), 
+                    restrictions);
             }
             else
             {
