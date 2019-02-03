@@ -63,6 +63,21 @@ if a > 10
 
             Assert.True(result == 10);
         }
+
+        [Fact]
+        public void TypeOfReturnsCorrectType()
+        {
+            var code = @"
+use System.Text
+
+typeof(StringBuilder)
+";
+
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.True(result.Name == "StringBuilder");
+        }
         
         [Fact]
         public void GetIndex()
@@ -70,7 +85,7 @@ if a > 10
             var code = @"
 use System
 
-a = Array.CreateInstance(Int32, 10)
+a = Array.CreateInstance(typeof(Int32), 10)
 a[5]
 ";
  
@@ -86,7 +101,7 @@ a[5]
             var code = @"
 use System
 
-a = Array.CreateInstance(Int32, 10)
+a = Array.CreateInstance(typeof(Int32), 10)
 a[4] = 50
 a[4]
 ";

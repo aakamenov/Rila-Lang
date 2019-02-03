@@ -73,8 +73,8 @@
     <Compile Include="Compiler\Ast\RangeExpression.cs" />
     <Compile Include="Compiler\Ast\ReturnStatement.cs" />
     <Compile Include="Compiler\Ast\Statement.cs" />
+    <Compile Include="Compiler\Ast\TypeOfExpression.cs" />
     <Compile Include="Compiler\Ast\UseStatement.cs" />
-    <Compile Include="Compiler\Ast\Utils\ExpressionHelpers.cs" />
     <Compile Include="Compiler\Ast\ValueExpression.cs" />
     <Compile Include="Compiler\Ast\WhileLoopStatement.cs" />
     <Compile Include="Compiler\GenScope.cs" />
@@ -96,6 +96,7 @@
     <Compile Include="Compiler\Parselets\PrefixOperatorParslet.cs" />
     <Compile Include="Compiler\Parselets\RangeOperatorParselet.cs" />
     <Compile Include="Compiler\Parselets\StringParselet.cs" />
+    <Compile Include="Compiler\Parselets\TypeOfParselet.cs" />
     <Compile Include="Compiler\RilaParser.ExpressionsConfig.cs" />
     <Compile Include="Compiler\RilaParser.cs" />
     <Compile Include="Compiler\RilaParserException.cs" />

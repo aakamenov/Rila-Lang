@@ -31,7 +31,8 @@ namespace RilaLang.Compiler
             { "continue", TokenType.Continue },
             { "new", TokenType.New },
             { "use", TokenType.Use },
-            { "as", TokenType.As }
+            { "as", TokenType.As },
+            { "typeof", TokenType.TypeOf }
         };
 
         public Token(TokenType type, string content, uint indentationLevel, uint line, uint column)
@@ -112,6 +113,7 @@ namespace RilaLang.Compiler
         Break,
         Continue,
         New,
-        As
+        As,
+        TypeOf
     }
 }

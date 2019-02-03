@@ -17,8 +17,11 @@ namespace RilaLang.Compiler
             RegisterPrefix(TokenType.Identifier, new IdentifierParselet());
             RegisterPrefix(TokenType.LParen, new GroupParselet());
             RegisterInfix(TokenType.LParen, new CallParselet());
-            RegisterPrefix(TokenType.True, new BoolParselet());
-            RegisterPrefix(TokenType.False, new BoolParselet());
+
+            var boolParselet = new BoolParselet();
+            RegisterPrefix(TokenType.True, boolParselet);
+            RegisterPrefix(TokenType.False, boolParselet);
+
             RegisterPrefix(TokenType.StringLiteral, new StringParselet());
             RegisterPrefix(TokenType.NumericLiteral, new NumberParselet());
 
@@ -49,6 +52,7 @@ namespace RilaLang.Compiler
             RegisterInfix(TokenType.Range, new RangeOperatorParselet());
             RegisterInfix(TokenType.LSquare, new IndexerParselet());
             RegisterPrefix(TokenType.New, new NewParselet());
+            RegisterPrefix(TokenType.TypeOf, new TypeOfParselet());
         }
 
         private void RegisterPrefix(TokenType type, IPrefixParselet handler)

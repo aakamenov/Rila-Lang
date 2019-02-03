@@ -4,7 +4,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
-using RilaLang.Compiler.Ast.Utils;
 using RilaLang.Runtime.Binding;
 using RilaLang.Runtime.Binding.Utils;
 
@@ -66,20 +65,7 @@ namespace RilaLang.Compiler.Ast
                             args[0] = result;
 
                             for (var i = 1; i <= call.Arguments.Count; i++)
-                            {
-                                var arg = call.Arguments.ElementAt(i - 1);
-
-                                if(arg is IdentifierExpression identifier) //Argument could be a type itself
-                                {
-                                    if(!scope.TryGetVariable(identifier.Name, out ParameterExpression _))
-                                    {
-                                        args[i] = ExpressionHelpers.ConstructGetTypeExpression(scope, identifier.Name);
-                                        continue;
-                                    }
-                                }
-
-                                args[i] = arg.GenerateExpressionTree(scope);
-                            }
+                                args[i] = call.Arguments.ElementAt(i - 1).GenerateExpressionTree(scope);
 
                             result = DLR.Expression.Dynamic(
                                 scope.Runtime.GetInvokeMemberBinder(new Tuple<string, CallInfo>(name.Name, new CallInfo(call.Arguments.Count))),

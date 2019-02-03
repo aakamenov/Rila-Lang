@@ -7,13 +7,20 @@ using System.Threading.Tasks;
 using RilaLang.Runtime;
 using RilaLang.Runtime.Binding.Utils;
 
-namespace RilaLang.Compiler.Ast.Utils
+namespace RilaLang.Compiler.Ast
 {
     using DLR = System.Linq.Expressions;
 
-    public static class ExpressionHelpers
+    public class TypeOfExpression : Expression
     {
-        public static DLR.Expression ConstructGetTypeExpression(GenScope scope, string typeName)
+        public string TypeName { get; }
+
+        public TypeOfExpression(string typeName)
+        {
+            TypeName = typeName;
+        }
+
+        public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
             var getTypeProvider = DLR.Expression.Dynamic(
                 scope.Runtime.GetGetMemberBinder(nameof(Rila.TypeProvider)),
@@ -24,7 +31,7 @@ namespace RilaLang.Compiler.Ast.Utils
                 scope.Runtime.GetInvokeMemberBinder(new Tuple<string, CallInfo>(nameof(TypeProvider.GetType), new CallInfo(1))),
                 typeof(object),
                 getTypeProvider,
-                DLR.Expression.Constant(new UnresolvedType(typeName)));
+                DLR.Expression.Constant(new UnresolvedType(TypeName)));
         }
     }
 }
