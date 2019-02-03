@@ -4,11 +4,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Scripting.Ast;
 
 namespace RilaLang.Compiler.Ast
 {
     using DLR = System.Linq.Expressions;
+    using AstUtils = Microsoft.Scripting.Ast;
 
     public class WhileLoopStatement : Statement
     {
@@ -25,10 +25,10 @@ namespace RilaLang.Compiler.Ast
         {
             var loop = scope.CreateLoop();
 
-            var condition = Utils.Convert(Condition.GenerateExpressionTree(scope), typeof(bool));
+            var condition = AstUtils.Utils.Convert(Condition.GenerateExpressionTree(scope), typeof(bool));
             var block = Block.GenerateExpressionTree(loop);
 
-            return Utils.While(condition, block, DLR.Expression.Empty(), loop.BreakTarget, loop.ContinueTarget);
+            return AstUtils.Utils.While(condition, block, DLR.Expression.Empty(), loop.BreakTarget, loop.ContinueTarget);
         }
     }
 }

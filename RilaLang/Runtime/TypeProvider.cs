@@ -43,7 +43,7 @@ namespace RilaLang.Runtime
                 }
                 catch(ArgumentException)
                 {
-                    throw new ArgumentException($"Namespace or alias \"{@namespace}\" has already been imported!");
+                    throw new RilaRuntimeException($"Namespace or alias \"{@namespace}\" has already been imported!");
                 }
 
                 match = true;
@@ -51,7 +51,7 @@ namespace RilaLang.Runtime
             }
 
             if (!match)
-                throw new ArgumentException($"Could not find namespace \"{@namespace}\"");
+                throw new RilaRuntimeException($"Could not find namespace \"{@namespace}\"");
         }
 
         public bool IsAlias(string alias)
@@ -96,6 +96,14 @@ namespace RilaLang.Runtime
             type = default(Type);
 
             return false;
+        }
+
+        public Type GetType(UnresolvedType unresolved)
+        {
+            if (TryGetType(unresolved, out Type type))
+                return type;
+
+            throw new RilaRuntimeException($"Could not find type \"{unresolved.Name}\"");
         }
     }
 }

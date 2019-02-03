@@ -105,7 +105,7 @@ namespace RilaLang.Compiler
             }
             else
                 throw new RilaParserException($"Unrecognised token: {token.Content}");
-
+            
             while (precedence < GetPrecedence())
             {
                 token = Consume();

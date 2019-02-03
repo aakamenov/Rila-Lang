@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RilaLang.Runtime;
-using RilaLang.Runtime.Binding;
 
 namespace RilaLang.Compiler.Ast
 {

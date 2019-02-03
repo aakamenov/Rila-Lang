@@ -290,7 +290,7 @@ namespace RilaLang.Compiler
 
         private bool IsWordChar(char c)
         {
-            return char.IsLetter(c) || c == '_';
+            return char.IsLetter(c) || char.IsNumber(c) || c == '_';
         }
 
         private string ReadStringLiteral()

@@ -68,21 +68,25 @@ if a > 10
         public void GetIndex()
         {
             var code = @"
-a = 1..10
+use System
+
+a = Array.CreateInstance(Int32, 10)
 a[5]
 ";
-
+ 
             var engine = Rila.CreateRilaEngine();
             var result = engine.Execute(code);
 
-            Assert.True(result == 6);
+            Assert.True(result == 0);
         }
 
         [Fact]
         public void SetIndex()
         {
             var code = @"
-a = 1..10
+use System
+
+a = Array.CreateInstance(Int32, 10)
 a[4] = 50
 a[4]
 ";
@@ -120,7 +124,7 @@ use System
             var engine = Rila.CreateRilaEngine();
             Action action = () => engine.Execute(code);
 
-            Assert.Throws<ArgumentException>(action);
+            Assert.Throws<RilaRuntimeException>(action);
         }
 
         [Fact]
@@ -133,7 +137,7 @@ use System.Text as sys
             var engine = Rila.CreateRilaEngine();
             Action action = () => engine.Execute(code);
 
-            Assert.Throws<ArgumentException>(action);
+            Assert.Throws<RilaRuntimeException>(action);
         }
 
         [Fact]

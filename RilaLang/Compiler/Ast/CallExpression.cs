@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using RilaLang.Runtime.Binding;
+using RilaLang.Compiler.Ast.Utils;
 
 namespace RilaLang.Compiler.Ast
 {
@@ -29,7 +30,18 @@ namespace RilaLang.Compiler.Ast
 
             for(var i = 0; i < Arguments.Count; i++)
             {
-                args[i] = Arguments.ElementAt(i).GenerateExpressionTree(scope);
+                var arg = Arguments.ElementAt(i);
+
+                if (arg is IdentifierExpression ident) //Argument could be a type itself
+                {
+                    if (!scope.TryGetVariable(ident.Name, out ParameterExpression _))
+                    {
+                        args[i] = ExpressionHelpers.ConstructGetTypeExpression(scope, ident.Name);
+                        continue;
+                    }
+                }
+
+                args[i] = arg.GenerateExpressionTree(scope);
             }
 
             if (scope.Root.FunctionDefinitions.TryGetValue(identifier.Name, out LambdaExpression lambda))

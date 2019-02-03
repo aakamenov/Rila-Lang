@@ -74,6 +74,7 @@
     <Compile Include="Compiler\Ast\ReturnStatement.cs" />
     <Compile Include="Compiler\Ast\Statement.cs" />
     <Compile Include="Compiler\Ast\UseStatement.cs" />
+    <Compile Include="Compiler\Ast\Utils\ExpressionHelpers.cs" />
     <Compile Include="Compiler\Ast\ValueExpression.cs" />
     <Compile Include="Compiler\Ast\WhileLoopStatement.cs" />
     <Compile Include="Compiler\GenScope.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="Runtime\Binding\Utils\RangeIterator.cs" />
     <Compile Include="Runtime\Binding\Utils\UnresolvedType.cs" />
     <Compile Include="Runtime\Rila.cs" />
+    <Compile Include="Runtime\RilaRuntimeException.cs" />
     <Compile Include="Runtime\TypeProvider.cs" />
   </ItemGroup>
   <ItemGroup>
