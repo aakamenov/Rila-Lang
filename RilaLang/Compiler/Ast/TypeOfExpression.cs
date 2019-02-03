@@ -13,15 +13,22 @@ namespace RilaLang.Compiler.Ast
 
     public class TypeOfExpression : Expression
     {
-        public string TypeName { get; }
+        public Expression Expression { get; }
 
-        public TypeOfExpression(string typeName)
+        public TypeOfExpression(Expression expression)
         {
-            TypeName = typeName;
+            Expression = expression;
         }
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
+            DLR.Expression arg = null;
+
+            if (Expression is IdentifierExpression identifier)
+                arg = DLR.Expression.Constant(new UnresolvedType(identifier.Name));
+            else
+                arg = Expression.GenerateExpressionTree(scope); // Alias
+
             var getTypeProvider = DLR.Expression.Dynamic(
                 scope.Runtime.GetGetMemberBinder(nameof(Rila.TypeProvider)),
                 typeof(object),
@@ -31,7 +38,7 @@ namespace RilaLang.Compiler.Ast
                 scope.Runtime.GetInvokeMemberBinder(new Tuple<string, CallInfo>(nameof(TypeProvider.GetType), new CallInfo(1))),
                 typeof(object),
                 getTypeProvider,
-                DLR.Expression.Constant(new UnresolvedType(TypeName)));
+                arg);
         }
     }
 }

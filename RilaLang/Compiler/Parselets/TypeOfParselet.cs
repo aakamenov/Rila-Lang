@@ -6,11 +6,7 @@ namespace RilaLang.Compiler.Parselets
     {
         public Expression Parse(RilaParser parser, Token token)
         {
-            parser.Expect(out Token _, TokenType.LParen);
-            parser.Expect(out Token identifier, TokenType.Identifier);
-            parser.Expect(out Token _, TokenType.RParen);
-
-            return new TypeOfExpression(identifier.Content);
+            return new TypeOfExpression(parser.ParseExpression());
         }
     }
 }

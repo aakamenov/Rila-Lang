@@ -78,7 +78,22 @@ typeof(StringBuilder)
 
             Assert.True(result.Name == "StringBuilder");
         }
-        
+
+        [Fact]
+        public void TypeOfWorksWithAlias()
+        {
+            var code = @"
+use System.Text as text
+
+typeof(text.StringBuilder)
+";
+
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.True(result.Name == "StringBuilder");
+        }
+
         [Fact]
         public void GetIndex()
         {

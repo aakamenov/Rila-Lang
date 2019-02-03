@@ -101,9 +101,12 @@ namespace RilaLang.Runtime.Binding
 
                 if (res.Count == 0)
                 {
+                    var argTypes = args.Select(x => x.RuntimeType.Name).ToArray();
+                    var typesString = string.Join(", ", argTypes);
+
                     return errorSuggestion ??
                         RuntimeHelpers.CreateThrow(target, args, restrictions, typeof(MissingMemberException),
-                            new string[] { $"Missing member {args.ToString()}" });
+                            new string[] { $"Missing member {typesString}" });
                 }
 
                 // restrictions and conversion must be done consistently.
