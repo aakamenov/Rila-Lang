@@ -18,7 +18,21 @@ namespace RilaLang
     {
         static void Main(string[] args)
         {
+            if(args.Length == 0)
+            {
+                Console.WriteLine("No file provided. Exiting...");
+                return;
+            }
 
+            try
+            {
+                var engine = Rila.CreateRilaEngine();
+                engine.ExecuteFile(args[0]);
+            }
+            catch(Exception e)
+            {
+                Console.Error.WriteLine(e.Message);
+            }
         }
     }
 }

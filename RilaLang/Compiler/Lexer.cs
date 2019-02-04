@@ -308,10 +308,18 @@ namespace RilaLang.Compiler
 
                 if (ch == '\\')
                 {
-                    if (TryPeekChar(out char next) && next == '\"')
+                    if (TryPeekChar(out char next))
                     {
-                        builder.Append(next);
-                        AdvancePosition();
+                        switch(next)
+                        {
+                            case '\"':
+                            case '\\':
+                                builder.Append(next);
+                                AdvancePosition();
+                                break;
+                            default:
+                                throw new RilaParserException($"Invalid escape sequence \"{ch + next}\"");
+                        }
                     }
                 }
                 else if (ch == '\"')
