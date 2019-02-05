@@ -117,6 +117,8 @@
     <Compile Include="Runtime\Binding\RuntimeHelpers.cs" />
     <Compile Include="Runtime\Binding\Utils\RangeIterator.cs" />
     <Compile Include="Runtime\Binding\Utils\UnresolvedType.cs" />
+    <Compile Include="Runtime\Reactive\Cell.cs" />
+    <Compile Include="Runtime\Reactive\Signal.cs" />
     <Compile Include="Runtime\Rila.cs" />
     <Compile Include="Runtime\RilaRuntimeException.cs" />
     <Compile Include="Runtime\TypeProvider.cs" />
