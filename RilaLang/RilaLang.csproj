@@ -73,6 +73,7 @@
     <Compile Include="Compiler\Ast\RangeExpression.cs" />
     <Compile Include="Compiler\Ast\ReturnStatement.cs" />
     <Compile Include="Compiler\Ast\Statement.cs" />
+    <Compile Include="Compiler\Ast\TryCatchStatement.cs" />
     <Compile Include="Compiler\Ast\TypeOfExpression.cs" />
     <Compile Include="Compiler\Ast\UseStatement.cs" />
     <Compile Include="Compiler\Ast\ValueExpression.cs" />

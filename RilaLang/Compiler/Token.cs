@@ -32,7 +32,10 @@ namespace RilaLang.Compiler
             { "new", TokenType.New },
             { "use", TokenType.Use },
             { "as", TokenType.As },
-            { "typeof", TokenType.TypeOf }
+            { "typeof", TokenType.TypeOf },
+            { "try", TokenType.Try },
+            { "catch", TokenType.Catch },
+            { "finally", TokenType.Finally }
         };
 
         public Token(TokenType type, string content, uint indentationLevel, uint line, uint column)
@@ -114,6 +117,9 @@ namespace RilaLang.Compiler
         Continue,
         New,
         As,
-        TypeOf
+        TypeOf,
+        Try,
+        Catch,
+        Finally
     }
 }
