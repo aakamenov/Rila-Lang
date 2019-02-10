@@ -8,7 +8,7 @@ namespace RilaLang.Runtime
 {
     public class RilaRuntimeException : Exception
     {
-        internal RilaRuntimeException(string message) : base(message) { }
-        internal RilaRuntimeException(string message, Exception inner) : base(message, inner) { }
+        public RilaRuntimeException(string message) : base(message) { }
+        public RilaRuntimeException(string message, Exception inner) : base(message, inner) { }
     }
 }

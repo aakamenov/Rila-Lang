@@ -7,11 +7,11 @@ using RilaLang.Compiler.Ast;
 
 namespace RilaLang.Compiler.Parselets
 {
-    public class PrefixOperatorParslet : IPrefixParselet, IPrecedence
+    public class PrefixOperatorParselet : IPrefixParselet, IPrecedence
     {
         public Precedence Precedence { get; }
 
-        public PrefixOperatorParslet(Precedence precedence)
+        public PrefixOperatorParselet(Precedence precedence)
         {
             Precedence = precedence;
         }

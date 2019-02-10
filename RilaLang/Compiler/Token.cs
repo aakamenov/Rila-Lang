@@ -32,7 +32,8 @@ namespace RilaLang.Compiler
             { "new", TokenType.New },
             { "use", TokenType.Use },
             { "as", TokenType.As },
-            { "typeof", TokenType.TypeOf }
+            { "typeof", TokenType.TypeOf },
+            { "cell", TokenType.Cell }
         };
 
         public Token(TokenType type, string content, uint indentationLevel, uint line, uint column)
@@ -97,6 +98,9 @@ namespace RilaLang.Compiler
         RParen,
         LSquare,
         RSquare,
+        At,
+        LCurly,
+        RCurly,
         
         Function,
         If,
@@ -114,6 +118,7 @@ namespace RilaLang.Compiler
         Continue,
         New,
         As,
-        TypeOf
+        TypeOf,
+        Cell
     }
 }
