@@ -34,6 +34,16 @@ namespace RilaLang.Compiler
             var next = source[position];
             Token token = null;
 
+            if(next == '#')
+            {
+                SkipComments();
+
+                if(AtEof)
+                    return new Token(TokenType.EOF, string.Empty, 0, currentLine, currentColumn);
+
+                next = source[position];
+            }
+
             if(IsWhiteSpace(next))
             {
                 var wsCount = ConsumeWhiteSpace();
@@ -43,6 +53,9 @@ namespace RilaLang.Compiler
                 {
                     currentIndentation = wsCount;
                 }
+
+                if (AtEof)
+                    return new Token(TokenType.EOF, string.Empty, 0, currentLine, currentColumn);
 
                 next = source[position];
             }
@@ -246,6 +259,30 @@ namespace RilaLang.Compiler
         {
             position++;
             currentColumn++;
+        }
+
+        private void SkipComments()
+        {
+            while(TryPeekChar(out char next))
+            {
+                if(next == '\r' || next == '\n')
+                {
+                    position++; // No need to call AdvancePosition()
+
+                    if (TryPeekChar(out char ch))
+                    {
+                        if (ch == '\r' || ch == '\n')
+                            position++;
+
+                        NewLine();
+
+                        if (!(ch == '#'))
+                            break;
+                    }
+                }
+
+                position++;
+            }
         }
 
         private string ReadWord(char first)
