@@ -26,6 +26,7 @@ namespace RilaLang.Runtime
         public TypeProvider TypeProvider { get; }
 
         private Dictionary<ExpressionType, RilaBinaryOperationBinder> binaryOperationBinders;
+        private Dictionary<ExpressionType, RilaUnaryOperationBinder> unaryOperationBinders;
         private Dictionary<string, RilaGetMemberBinder> getMemberBinders;
         private Dictionary<CallInfo, RilaCreateInstanceBinder> createInstanceBinders;
         private Dictionary<Tuple<string, CallInfo>, RilaInvokeMemberBinder> invokeMemberBinders;
@@ -37,6 +38,7 @@ namespace RilaLang.Runtime
             TypeProvider = new TypeProvider(assemblies);
 
             binaryOperationBinders = new Dictionary<ExpressionType, RilaBinaryOperationBinder>();
+            unaryOperationBinders = new Dictionary<ExpressionType, RilaUnaryOperationBinder>();
             getMemberBinders = new Dictionary<string, RilaGetMemberBinder>();
             createInstanceBinders = new Dictionary<CallInfo, RilaCreateInstanceBinder>();
             invokeMemberBinders = new Dictionary<Tuple<string, CallInfo>, RilaInvokeMemberBinder>();
@@ -65,6 +67,17 @@ namespace RilaLang.Runtime
 
             binder = new RilaBinaryOperationBinder(operation);
             binaryOperationBinders[operation] = binder;
+
+            return binder;
+        }
+
+        public RilaUnaryOperationBinder GetUnaryOperationBinder(ExpressionType operation)
+        {
+            if (unaryOperationBinders.TryGetValue(operation, out RilaUnaryOperationBinder binder))
+                return binder;
+
+            binder = new RilaUnaryOperationBinder(operation);
+            unaryOperationBinders[operation] = binder;
 
             return binder;
         }

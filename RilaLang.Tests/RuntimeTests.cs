@@ -65,6 +65,17 @@ if a > 10
         }
 
         [Fact]
+        public void Booleans()
+        {
+            var code = "not(not true and false)";
+
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.True(result == true);
+        }
+
+        [Fact]
         public void TypeOfReturnsCorrectType()
         {
             var code = @"

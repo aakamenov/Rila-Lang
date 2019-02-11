@@ -18,13 +18,20 @@ namespace RilaLang.Compiler.Ast
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
+            var rhs = Rhs.GenerateExpressionTree(scope);
+
+            return DLR.Expression.Dynamic(scope.Runtime.GetUnaryOperationBinder(GetOperation()), typeof(object), rhs);
+        }
+
+        private ExpressionType GetOperation()
+        {
             switch(Operation)
             {
-                case TokenType.Minus: return DLR.Expression.MakeUnary(ExpressionType.Negate, Rhs.GenerateExpressionTree(scope), typeof(object));
-                case TokenType.Plus: return DLR.Expression.MakeUnary(ExpressionType.UnaryPlus, Rhs.GenerateExpressionTree(scope), typeof(object));
-                case TokenType.Not: return DLR.Expression.MakeUnary(ExpressionType.Not, Rhs.GenerateExpressionTree(scope), typeof(object));
+                case TokenType.Minus: return ExpressionType.Negate;
+                case TokenType.Plus: return ExpressionType.UnaryPlus;
+                case TokenType.Not: return ExpressionType.Not;
                 default:
-                    throw new InvalidOperationException("Invalid token representing a prefix operation.");
+                    throw new InvalidOperationException("Invalid token representing an unary operation.");
             }
         }
     }

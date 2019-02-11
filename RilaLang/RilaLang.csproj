@@ -114,6 +114,7 @@
     <Compile Include="Runtime\Binding\RilaInvokeMemberBinder.cs" />
     <Compile Include="Runtime\Binding\RilaSetIndexBinder.cs" />
     <Compile Include="Runtime\Binding\RilaSetMemberBinder.cs" />
+    <Compile Include="Runtime\Binding\RilaUnaryOperationBinder.cs" />
     <Compile Include="Runtime\Binding\RuntimeHelpers.cs" />
     <Compile Include="Runtime\Binding\Utils\RangeIterator.cs" />
     <Compile Include="Runtime\Binding\Utils\UnresolvedType.cs" />
