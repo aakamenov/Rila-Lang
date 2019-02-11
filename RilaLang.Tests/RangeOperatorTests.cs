@@ -19,7 +19,7 @@ namespace RilaLang.Tests
 
             Assert.True(result is RangeIterator<int>);
             var enumerator = result.GetEnumerator();
-            Assert.True(enumerator.Current == 10);
+            Assert.True(enumerator.Current == 0);
 
             while (enumerator.MoveNext()) { }
 
@@ -74,7 +74,13 @@ a = 5 + 5
             var result = engine.Execute(code);
 
             Assert.True(result is RangeIterator<int>);
-            Assert.True(result.GetEnumerator().MoveNext() == false);
+
+            var enumerator = result.GetEnumerator();
+
+            enumerator.MoveNext();
+            Assert.True(enumerator.Current == 5);
+   
+            Assert.True(enumerator.MoveNext() == false);
         }
 
         [Fact]
