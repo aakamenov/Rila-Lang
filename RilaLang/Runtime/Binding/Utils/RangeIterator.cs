@@ -9,8 +9,8 @@ namespace RilaLang.Runtime.Binding.Utils
 {
     public class RangeIterator<T> where T : struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>, IFormattable
     {
-        private T start;
-        private T end;
+        private readonly T start;
+        private readonly T end;
 
         public RangeIterator(T start, T end)
         {
@@ -44,18 +44,23 @@ namespace RilaLang.Runtime.Binding.Utils
         protected readonly T start;
         protected readonly T end;
         protected T current;
+        protected bool iterationStarted;
 
         public Range(T start, T end)
         {
             this.end = end;
             this.start = start;
             
-            current = start;
+            current = default(T);
+        }
+
+        public void Reset()
+        {
+            current = default(T);
+            iterationStarted = false;
         }
 
         public abstract bool MoveNext();
-
-        public abstract void Reset();
     }
 
     internal class IntRange : Range<int>
@@ -67,14 +72,15 @@ namespace RilaLang.Runtime.Binding.Utils
             if (current == end)
                 return false;
 
-            current++;
+            if(!iterationStarted)
+            {
+                iterationStarted = true;
+                current = start;
+            }
+            else
+                current++;
 
             return true;
-        }
-
-        public override void Reset()
-        {
-            current = start;
         }
     }
 }
