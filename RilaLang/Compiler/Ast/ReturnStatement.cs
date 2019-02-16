@@ -23,10 +23,11 @@ namespace RilaLang.Compiler.Ast
                 throw new InvalidOperationException("No function to return from!");
 
             if(Expression is null)
-                return DLR.Expression.Goto(GenScope.CreateReturnTarget());
+                return DLR.Expression.Goto(scope.GetFirstLambdaScope().CreateReturnTarget());
 
             var expression = Expression.GenerateExpressionTree(scope);
-            return DLR.Expression.Goto(GenScope.CreateReturnTarget(false), expression, expression.Type);
+
+            return DLR.Expression.Goto(scope.GetFirstLambdaScope().CreateReturnTarget(false), expression, expression.Type);
         }
     }
 }

@@ -45,12 +45,19 @@ namespace RilaLang.Compiler.Ast
             }
 
             var body = Body.GenerateExpressionTree(functionScope);
-            var wrapper = DLR.Expression.Block(body, DLR.Expression.Label(GenScope.ReturnTarget, body));
+            DLR.LambdaExpression function = null;
 
-            var function = DLR.Expression.Lambda(wrapper, Name, parameters);
-            scope.Root.FunctionDefinitions[Name] = function;
+            if(functionScope.ReturnTarget is null)
+            {
+                function = DLR.Expression.Lambda(body, Name, parameters);
+            }
+            else
+            {
+                var wrapper = DLR.Expression.Block(body, DLR.Expression.Label(functionScope.ReturnTarget, body));
+                function = DLR.Expression.Lambda(wrapper, Name, parameters);
+            }
 
-            GenScope.CreateReturnTarget(); // Reset the label
+            scope.Root.FunctionDefinitions[Name] = function.Compile();
 
             return function; //TODO: Since we store the lambda object at the root, this doesn't make sense now...
         }

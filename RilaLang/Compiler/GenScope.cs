@@ -24,12 +24,7 @@ namespace RilaLang.Compiler
 
         public Dictionary<string, DLR.ParameterExpression> Definitions { get; }
 
-        public static DLR.LabelTarget ReturnTarget;
-
-        static GenScope()
-        {
-            ReturnTarget = CreateReturnTarget();
-        }
+        public DLR.LabelTarget ReturnTarget { get; private set; }
 
         private GenScope(Rila runtime, GenScope parent) : this(runtime)
         {
@@ -45,7 +40,7 @@ namespace RilaLang.Compiler
             ContinueTarget = DLR.Expression.Label("@continue");
         }
 
-        public static DLR.LabelTarget CreateReturnTarget(bool isVoid = true)
+        public DLR.LabelTarget CreateReturnTarget(bool isVoid = true)
         {
             if (isVoid)
                 ReturnTarget = DLR.Expression.Label("@return");
@@ -109,6 +104,17 @@ namespace RilaLang.Compiler
             return Parent.IsInLambda();
         }
 
+        public GenScope GetFirstLambdaScope()
+        {
+            if (IsLambda)
+                return this;
+
+            if (Parent is null)
+                return null;
+
+            return Parent.GetFirstLambdaScope();
+        }
+
         public IEnumerable<DLR.ParameterExpression> GetAllVariables()
         {
             return Definitions.Select(x => x.Value);
@@ -128,12 +134,12 @@ namespace RilaLang.Compiler
 
     public class GenScopeRoot : GenScope
     {
-        public Dictionary<string, DLR.LambdaExpression> FunctionDefinitions { get; }
+        public Dictionary<string, Delegate> FunctionDefinitions { get; }
         public DLR.ParameterExpression RuntimeParameter { get; }
 
         public GenScopeRoot(Rila runtime) : base(runtime)
         {
-            FunctionDefinitions = new Dictionary<string, DLR.LambdaExpression>();
+            FunctionDefinitions = new Dictionary<string, Delegate>();
             RuntimeParameter = DLR.Expression.Parameter(typeof(Rila));
             Root = this;
         }
