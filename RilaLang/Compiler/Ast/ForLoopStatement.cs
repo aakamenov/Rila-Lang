@@ -35,7 +35,7 @@ namespace RilaLang.Compiler.Ast
             loopScope.Definitions[VariableName] = bindVar;
             var block = Block.GenerateExpressionTree(loopScope);
 
-            var enumeratorVar = DLR.Expression.Variable(typeof(object), VariableName);
+            var enumeratorVar = DLR.Expression.Variable(typeof(object), "$enumeratorVar");
 
             var getEnumeratorCall = DLR.Expression.Dynamic(
                 scope.Runtime.GetInvokeMemberBinder(new Tuple<string, CallInfo>("GetEnumerator", new CallInfo(0))),
