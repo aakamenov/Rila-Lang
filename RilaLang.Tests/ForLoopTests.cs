@@ -54,5 +54,47 @@ a
 
             Assert.True(result == 35);
         }
+
+        [Fact]
+        public void ForLoopBreak()
+        {
+            var code = @"
+a = 0
+
+for i in 0..10
+    if i == 5
+        break
+
+    a = i
+
+a
+";
+
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.True(result == 4);
+        }
+
+        [Fact]
+        public void ForLoopContinue()
+        {
+            var code = @"
+a = 0
+
+for i in 0..10
+    if i % 2 == 0
+        continue
+
+    a = 9
+
+a
+";
+
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.True(result == 9);
+        }
     }
 }

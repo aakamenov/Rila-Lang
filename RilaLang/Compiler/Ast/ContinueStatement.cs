@@ -18,7 +18,7 @@ namespace RilaLang.Compiler.Ast
             if (loop is null)
                 throw new InvalidOperationException("No enclosing loop to continue from.");
 
-            return DLR.Expression.Continue(loop.BreakTarget);
+            return DLR.Expression.Continue(loop.ContinueTarget);
         }
     }
 }

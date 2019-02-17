@@ -33,6 +33,7 @@ namespace RilaLang.Compiler.Ast
             var inExpr = InExpression.GenerateExpressionTree(scope);
 
             loopScope.Definitions[VariableName] = bindVar;
+
             var block = Block.GenerateExpressionTree(loopScope);
 
             var enumeratorVar = DLR.Expression.Variable(typeof(object), "$enumeratorVar");
@@ -50,9 +51,7 @@ namespace RilaLang.Compiler.Ast
             var moveNextCall = DLR.Expression.Dynamic(scope.Runtime.GetInvokeMemberBinder(new Tuple<string, CallInfo>("MoveNext", new CallInfo(0))),
                 typeof(object),
                 enumeratorVar);
-
-            var breakLabel = DLR.Expression.Label("ForLoopBreak");
-
+            
             var loop =
                 DLR.Expression.Loop(
                     DLR.Expression.IfThenElse(
@@ -63,8 +62,9 @@ namespace RilaLang.Compiler.Ast
                             new[] { bindVar },
                             DLR.Expression.Assign(bindVar, DLR.Expression.Dynamic(scope.Runtime.GetGetMemberBinder("Current"), typeof(object), enumeratorVar)),
                             block),
-                        DLR.Expression.Break(breakLabel)),
-                    breakLabel);
+                        DLR.Expression.Break(loopScope.BreakTarget)),
+                    loopScope.BreakTarget,
+                    loopScope.ContinueTarget);
 
             var tryFinally =
                 DLR.Expression.TryFinally(
