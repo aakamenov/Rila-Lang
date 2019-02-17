@@ -35,30 +35,34 @@ namespace RilaLang.Compiler.Ast
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
-            var stmts = new DLR.ConditionalExpression[Branches.Count];
-            var hasElse = ElseBranch != null;
-            var count = hasElse ? Branches.Count - 1 : Branches.Count;
+            var ifs = CreateConditionalExpression(scope, 0);
 
-            for(int i = 0; i < count; i++)
+            return DLR.Expression.Block(ifs);
+        }
+
+        private DLR.ConditionalExpression CreateConditionalExpression(GenScope scope, int index)
+        {
+            var branch = Branches.ElementAt(index);
+
+            var condition = DLR.Expression.Convert(branch.Condition.GenerateExpressionTree(scope), typeof(bool));
+            var block = branch.Block.GenerateExpressionTree(scope);
+
+            index++;
+
+            if (index == Branches.Count)
             {
-                var branch = Branches.ElementAt(i);
-                var condition = DLR.Expression.Convert(branch.Condition.GenerateExpressionTree(scope), typeof(bool));
-                var block = branch.Block.GenerateExpressionTree(scope);
-
-                stmts[i] = DLR.Expression.IfThen(condition, block);
+                if (ElseBranch is null)
+                    return DLR.Expression.Condition(condition, block, DLR.Expression.Default(block.Type));
+                else
+                    return DLR.Expression.Condition(condition, block, ElseBranch.GenerateExpressionTree(scope), block.Type);
             }
-
-            if (hasElse)
-            {
-                var last = Branches.ElementAt(count);
-                var condition = DLR.Expression.Convert(last.Condition.GenerateExpressionTree(scope), typeof(bool));
-                var block = last.Block.GenerateExpressionTree(scope);
-                var elseBlock = ElseBranch.GenerateExpressionTree(scope);
-                
-                stmts[count] = DLR.Expression.IfThenElse(condition, block, elseBlock);
+            else
+            {               
+                return DLR.Expression.Condition(
+                    condition,
+                    block,
+                    CreateConditionalExpression(scope, index));
             }
-
-            return DLR.Expression.Block(stmts);
         }
     }
 }

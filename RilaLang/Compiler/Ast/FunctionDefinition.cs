@@ -47,7 +47,7 @@ namespace RilaLang.Compiler.Ast
             var body = Body.GenerateExpressionTree(functionScope);
             DLR.LambdaExpression function = null;
 
-            if(functionScope.ReturnTarget is null)
+            if(functionScope.ReturnTarget is null) //void returning function
             {
                 function = DLR.Expression.Lambda(body, Name, parameters);
             }
@@ -59,7 +59,7 @@ namespace RilaLang.Compiler.Ast
 
             scope.Root.FunctionDefinitions[Name] = function.Compile();
 
-            return function; //TODO: Since we store the lambda object at the root, this doesn't make sense now...
+            return function;
         }
     }
 }

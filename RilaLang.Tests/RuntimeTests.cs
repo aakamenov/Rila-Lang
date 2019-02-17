@@ -65,6 +65,25 @@ if a > 10
         }
 
         [Fact]
+        public void MultipleReturnsFunction()
+        {
+            var code = @"
+fun IsBiggerThanTen(number)
+    if number > 10
+        return true
+    else
+        return false
+
+IsBiggerThanTen(10)
+";
+
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.True(result == false);
+        }
+
+        [Fact]
         public void Booleans()
         {
             var code = "not(not true and false)";

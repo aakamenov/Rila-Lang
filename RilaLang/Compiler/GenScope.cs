@@ -42,6 +42,9 @@ namespace RilaLang.Compiler
 
         public DLR.LabelTarget CreateReturnTarget(bool isVoid = true)
         {
+            if (ReturnTarget != null)
+                return ReturnTarget;
+
             if (isVoid)
                 ReturnTarget = DLR.Expression.Label("@return");
             else

@@ -67,5 +67,27 @@ signal.Value
 
             Assert.True(result == 7);
         }
+
+        [Fact]
+        public void NotUsingAtSignDoesntCaptureCell()
+        {
+            var code = @"
+a = cell(5)
+b = cell(5)
+
+signal = { @a.Value + b.Value + 1 }
+
+a.Value = 2
+a.Value = 3
+b.Value = 3
+
+signal.Value
+";
+
+            var engine = Rila.CreateRilaEngine();
+            var result = engine.Execute(code);
+
+            Assert.True(result == 9);
+        }
     }
 }
