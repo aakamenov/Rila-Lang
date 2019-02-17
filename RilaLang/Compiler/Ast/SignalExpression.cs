@@ -21,15 +21,15 @@ namespace RilaLang.Compiler.Ast
 
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
-            var cellVars = new DLR.Expression[CellNames.Count + 1];
-            cellVars[0] = DLR.Expression.Constant(Expression.GenerateExpressionTree(scope));
+            var args = new DLR.Expression[CellNames.Count + 1];
+            args[0] = DLR.Expression.Quote(DLR.Expression.Lambda(Expression.GenerateExpressionTree(scope)));
             
             for (var i = 1; i < CellNames.Count + 1; i++)
             {
                 var varName = CellNames.ElementAt(i - 1);
 
                 if (scope.TryGetVariable(varName, out DLR.ParameterExpression variable))
-                    cellVars[i] = variable;
+                    args[i] = variable;
                 else
                     throw new ArgumentException($"Variable \"{varName}\" is not defined.");
             }
@@ -37,7 +37,7 @@ namespace RilaLang.Compiler.Ast
             return DLR.Expression.Dynamic(
                 new CreateSignalInstanceBinder(), 
                 typeof(object),
-                cellVars);
+                args);
         }
     }
 }

@@ -21,31 +21,31 @@ namespace RilaLang.Runtime.Reactive
 
         private T val;
         
-        private List<WeakReference<Signal<T>>> dependancies;
+        private List<WeakReference<Signal<T>>> dependencies;
 
         public Cell(T value)
         {
             val = value;
-            dependancies = new List<WeakReference<Signal<T>>>();
+            dependencies = new List<WeakReference<Signal<T>>>();
         }
 
-        public void AddDependancy(Signal<T> signal)
+        public void AddDependency(Signal<T> signal)
         {
-            foreach(var dependancy in dependancies)
+            foreach(var dependency in dependencies)
             {
-                if (dependancy.TryGetTarget(out Signal<T> target))
+                if (dependency.TryGetTarget(out Signal<T> target))
                 {
                     if (target == signal)
                         return;
                 }
             }
 
-            dependancies.Add(new WeakReference<Signal<T>>(signal));
+            dependencies.Add(new WeakReference<Signal<T>>(signal));
         }
 
         private void NotifyValueChanged()
         {
-            foreach(var dependancy in dependancies)
+            foreach(var dependancy in dependencies)
             {
                 if (dependancy.TryGetTarget(out Signal<T> target))
                     target.ReEvaluate();

@@ -43,7 +43,7 @@ a
             var engine = Rila.CreateRilaEngine();
             var result = engine.Execute(code);
 
-            Assert.IsType<Cell<int>>(result);
+            Assert.IsType<int>(result.Value);
         }
 
         [Fact]

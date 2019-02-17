@@ -23,7 +23,7 @@ namespace RilaLang.Runtime.Reactive
             ReEvaluate();
 
             foreach (var cell in cells)
-                cell.AddDependancy(this);
+                cell.AddDependency(this);
         }
 
         public void ReEvaluate()

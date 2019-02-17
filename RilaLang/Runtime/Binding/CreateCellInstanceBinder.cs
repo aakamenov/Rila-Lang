@@ -15,11 +15,11 @@ namespace RilaLang.Runtime.Binding
             if (!target.HasValue)
                 return Defer(target);
 
-            var ctor = typeof(Cell<>).MakeGenericType(target.RuntimeType).GetConstructors().First();
+            var ctor = typeof(Cell<>).MakeGenericType(typeof(object)).GetConstructors().First();
 
             return new DynamicMetaObject(
                 Expression.New(ctor, 
-                    Expression.Constant(target.Value, target.RuntimeType)),
+                    Expression.Constant(target.Value, typeof(object))),
                 target.Restrictions);
         }
     }
