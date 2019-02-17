@@ -186,6 +186,15 @@ namespace RilaLang.Compiler
                 case ']':
                     token = new Token(TokenType.RSquare, "]", currentIndentation, currentLine, currentColumn);
                     break;
+                case '@':
+                    token = new Token(TokenType.At, "@", currentIndentation, currentLine, currentColumn);
+                    break;
+                case '{':
+                    token = new Token(TokenType.LCurly, "{", currentIndentation, currentLine, currentColumn);
+                    break;
+                case '}':
+                    token = new Token(TokenType.RCurly, "}", currentIndentation, currentLine, currentColumn);
+                    break;
                 default:
                     {
                         if (!IsWordChar(next))

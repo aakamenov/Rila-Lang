@@ -22,6 +22,7 @@ namespace RilaLang.Runtime
         public Scope DlrGlobals { get; }
 
         public RangeOperationBinder RangeOperationBinder { get; }
+        public CreateCellInstanceBinder CreateCellInstanceBinder { get; }
 
         public TypeProvider TypeProvider { get; }
 
@@ -44,6 +45,7 @@ namespace RilaLang.Runtime
             invokeMemberBinders = new Dictionary<Tuple<string, CallInfo>, RilaInvokeMemberBinder>();
 
             RangeOperationBinder = new RangeOperationBinder();
+            CreateCellInstanceBinder = new CreateCellInstanceBinder();
         }
 
         public static ScriptEngine CreateRilaEngine()

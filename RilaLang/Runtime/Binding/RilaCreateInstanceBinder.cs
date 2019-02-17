@@ -24,7 +24,7 @@ namespace RilaLang.Runtime.Binding
         public override DynamicMetaObject FallbackCreateInstance(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
         {
             if (!target.HasValue || args.Any(x => !x.HasValue))
-                Defer(target, args);
+                return Defer(target, args);
 
             ConstructorInfo ctor = null;
             

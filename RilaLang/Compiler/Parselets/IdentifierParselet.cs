@@ -11,6 +11,14 @@ namespace RilaLang.Compiler.Parselets
     {
         public Expression Parse(RilaParser parser, Token token)
         {
+            if(token.TokenType == TokenType.At)
+            {
+                token = parser.Consume();
+
+                if(token.TokenType != TokenType.Identifier)
+                    parser.AppendError($"Expecting a cell variable identifier. Got: \"{token.Content}\"", token);
+            }
+
             return new IdentifierExpression(token.Content);
         }
     }

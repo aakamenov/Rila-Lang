@@ -14,7 +14,10 @@ namespace RilaLang.Compiler
             prefixParselets = new Dictionary<TokenType, IPrefixParselet>();
             infixParselets = new Dictionary<TokenType, IInfixParselet>();
 
-            RegisterPrefix(TokenType.Identifier, new IdentifierParselet());
+            var identifierParselet = new IdentifierParselet();
+            RegisterPrefix(TokenType.Identifier, identifierParselet);
+            RegisterPrefix(TokenType.At, identifierParselet);
+
             RegisterPrefix(TokenType.LParen, new GroupParselet());
             RegisterInfix(TokenType.LParen, new CallParselet());
 
@@ -26,9 +29,9 @@ namespace RilaLang.Compiler
             RegisterPrefix(TokenType.NumericLiteral, new NumberParselet());
 
             //Prefix operators
-            RegisterPrefix(TokenType.Minus, new PrefixOperatorParslet(Precedence.Prefix));
-            RegisterPrefix(TokenType.Plus, new PrefixOperatorParslet(Precedence.Prefix));
-            RegisterPrefix(TokenType.Not, new PrefixOperatorParslet(Precedence.Not));
+            RegisterPrefix(TokenType.Minus, new PrefixOperatorParselet(Precedence.Prefix));
+            RegisterPrefix(TokenType.Plus, new PrefixOperatorParselet(Precedence.Prefix));
+            RegisterPrefix(TokenType.Not, new PrefixOperatorParselet(Precedence.Not));
 
             //Math
             RegisterInfix(TokenType.Minus, new BinaryOperatorParslet(Precedence.Sum));
@@ -53,6 +56,8 @@ namespace RilaLang.Compiler
             RegisterInfix(TokenType.LSquare, new IndexerParselet());
             RegisterPrefix(TokenType.New, new NewParselet());
             RegisterPrefix(TokenType.TypeOf, new TypeOfParselet());
+            RegisterPrefix(TokenType.LCurly, new SignalParselet());
+            RegisterPrefix(TokenType.Cell, new CellParselet());
         }
 
         private void RegisterPrefix(TokenType type, IPrefixParselet handler)
