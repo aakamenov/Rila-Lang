@@ -20,10 +20,6 @@ namespace RilaLang.Runtime
         public const string LANG_NAME = "Rila";
 
         public Scope DlrGlobals { get; }
-
-        public RangeOperationBinder RangeOperationBinder { get; }
-        public CreateCellInstanceBinder CreateCellInstanceBinder { get; }
-
         public TypeProvider TypeProvider { get; }
 
         private Dictionary<ExpressionType, RilaBinaryOperationBinder> binaryOperationBinders;
@@ -43,9 +39,6 @@ namespace RilaLang.Runtime
             getMemberBinders = new Dictionary<string, RilaGetMemberBinder>();
             createInstanceBinders = new Dictionary<CallInfo, RilaCreateInstanceBinder>();
             invokeMemberBinders = new Dictionary<Tuple<string, CallInfo>, RilaInvokeMemberBinder>();
-
-            RangeOperationBinder = new RangeOperationBinder();
-            CreateCellInstanceBinder = new CreateCellInstanceBinder();
         }
 
         public static ScriptEngine CreateRilaEngine()

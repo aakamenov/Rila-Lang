@@ -1,4 +1,6 @@
-﻿namespace RilaLang.Compiler.Ast
+﻿using RilaLang.Runtime.Binding;
+
+namespace RilaLang.Compiler.Ast
 {
     using DLR = System.Linq.Expressions;
 
@@ -14,7 +16,7 @@
         public override DLR.Expression GenerateExpressionTree(GenScope scope)
         {
             return DLR.Expression.Dynamic(
-                scope.Runtime.CreateCellInstanceBinder, 
+                new CreateCellInstanceBinder(), 
                 typeof(object), 
                 Expression.GenerateExpressionTree(scope));
         }

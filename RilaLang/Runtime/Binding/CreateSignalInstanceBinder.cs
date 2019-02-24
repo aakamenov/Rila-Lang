@@ -26,7 +26,6 @@ namespace RilaLang.Runtime.Binding
             var genericArgument = typeof(object);
 
             var ctor = typeof(Signal<>).MakeGenericType(genericArgument).GetConstructors().First();
-            var listArgType = typeof(IList<>).MakeGenericType(cellType);
             var funcGenericType = typeof(Func<>).MakeGenericType(genericArgument);
 
             var func = target.Value as Expression<Func<object>>;

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RilaLang.Runtime.Binding;
 
 namespace RilaLang.Compiler.Ast
 {
@@ -25,7 +20,7 @@ namespace RilaLang.Compiler.Ast
             var start = Start.GenerateExpressionTree(scope);
             var end = End.GenerateExpressionTree(scope);
 
-            return DLR.Expression.Dynamic(scope.Runtime.RangeOperationBinder, typeof(object), start, end);
+            return DLR.Expression.Dynamic(new RangeOperationBinder(), typeof(object), start, end);
         }
     }
 }
