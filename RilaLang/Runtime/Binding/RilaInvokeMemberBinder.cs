@@ -106,7 +106,7 @@ namespace RilaLang.Runtime.Binding
 
                     return errorSuggestion ??
                         RuntimeHelpers.CreateThrow(target, args, restrictions, typeof(MissingMemberException),
-                            new string[] { $"Missing member {typesString}" });
+                            new string[] { $"Missing member {typesString} for method \"{Name}\"." });
                 }
 
                 // restrictions and conversion must be done consistently.

@@ -34,16 +34,6 @@ namespace RilaLang.Compiler
             var next = source[position];
             Token token = null;
 
-            if(next == '#')
-            {
-                SkipComments();
-
-                if(AtEof)
-                    return new Token(TokenType.EOF, string.Empty, 0, currentLine, currentColumn);
-
-                next = source[position];
-            }
-
             if(IsWhiteSpace(next))
             {
                 var wsCount = ConsumeWhiteSpace();
@@ -60,7 +50,17 @@ namespace RilaLang.Compiler
                 next = source[position];
             }
 
-            switch(next)
+            if (next == '#')
+            {
+                SkipComments();
+
+                if (AtEof)
+                    return new Token(TokenType.EOF, string.Empty, 0, currentLine, currentColumn);
+
+                next = source[position];
+            }
+
+            switch (next)
             {
                 case '\"':
                     token = new Token(TokenType.StringLiteral, ReadStringLiteral(), currentIndentation, currentLine, currentColumn);
